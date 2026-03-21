@@ -1,0 +1,46 @@
+.container {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.dropzoneGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 250px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #a6adc8;
+}
+
+.dropzone {
+  border: 2px dashed #45475a;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #6c7086;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  text-align: center;
+}
+
+.dropzone:hover,
+.dropzoneActive {
+  border-color: #89b4fa;
+  color: #89b4fa;
+}
+
+.fileName {
+  color: #a6e3a1;
+  font-weight: 500;
+}
+
+.error {
+  color: #f38ba8;
+  font-size: 12px;
+}
