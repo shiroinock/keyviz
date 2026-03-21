@@ -8,6 +8,7 @@ import { Keyboard } from "./components/Keyboard/Keyboard";
 import { CommandDetail } from "./components/CommandDetail/CommandDetail";
 import { LayoutLoader } from "./components/LayoutLoader/LayoutLoader";
 import { PracticeMode } from "./components/PracticeMode/PracticeMode";
+import { CommandReference } from "./components/CommandReference/CommandReference";
 import styles from "./App.module.css";
 
 export function App() {
@@ -16,7 +17,7 @@ export function App() {
   const [hoveredCustomKey, setHoveredCustomKey] = useState<string | null>(null);
   const [matrixKeymap, setMatrixKeymap] = useState<Record<string, string> | null>(null);
   const [viaKeymapFull, setViaKeymapFull] = useState<VIAKeymapFull | null>(null);
-  const [mode, setMode] = useState<"visualize" | "practice">("visualize");
+  const [mode, setMode] = useState<"visualize" | "practice" | "reference">("visualize");
   const [highlightKeys, setHighlightKeys] = useState<HighlightEntry[]>([]);
   const [keymapFileName, setKeymapFileName] = useState<string | null>(null);
   const [matrixCols, setMatrixCols] = useState(7); // Corne v4 default
@@ -89,6 +90,12 @@ export function App() {
             >
               練習
             </button>
+            <button
+              className={`${styles.modeTab} ${mode === "reference" ? styles.modeTabActive : ""}`}
+              onClick={() => setMode("reference")}
+            >
+              辞書
+            </button>
           </div>
         </div>
       </header>
@@ -113,15 +120,26 @@ export function App() {
         </div>
       )}
 
-      <div className={styles.keyboardWrapper}>
+      <div className={`${styles.keyboardWrapper} ${mode === "reference" ? styles.keyboardSticky : ""}`}>
         <Keyboard
           layout={layout}
           customKeymap={defaultCustomKeymap}
           matrixKeymap={matrixKeymap}
           onHover={mode === "visualize" ? handleHover : noopHover}
-          highlightKeys={mode === "practice" ? highlightKeys : undefined}
+          highlightKeys={mode === "practice" || mode === "reference" ? highlightKeys : undefined}
+          plain={mode === "practice" || mode === "reference"}
         />
       </div>
+
+      {mode === "reference" && (
+        <div className={styles.reference}>
+          <CommandReference
+            customKeymap={defaultCustomKeymap}
+            viaKeymapFull={viaKeymapFull}
+            onHighlightKeys={handleHighlightKeys}
+          />
+        </div>
+      )}
 
       {mode === "visualize" && (
         <div className={styles.detail}>

@@ -66,7 +66,18 @@
   padding: 16px 0;
 }
 
+.keyboardSticky {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #1e1e2e;
+}
+
 .detail {
+  margin-bottom: 24px;
+}
+
+.reference {
   margin-bottom: 24px;
 }
 

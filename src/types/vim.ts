@@ -5,6 +5,7 @@ export type VimCommandCategory =
   | "insert"
   | "visual"
   | "operator"
+  | "textobj"
   | "misc";
 
 export interface VimCommand {

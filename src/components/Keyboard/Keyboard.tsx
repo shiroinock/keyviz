@@ -26,9 +26,10 @@ interface KeyboardProps {
   matrixKeymap: Record<string, string> | null;
   onHover: (cmd: VimCommand | null, customKey: string | null) => void;
   highlightKeys?: HighlightEntry[];
+  plain?: boolean;
 }
 
-export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highlightKeys }: KeyboardProps) {
+export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highlightKeys, plain }: KeyboardProps) {
   // カスタム配列の逆引き: 出力文字 → QWERTY位置
   const inverseCustom = invertKeymap(customKeymap);
 
@@ -130,6 +131,7 @@ export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highligh
             vimCommand={vimCommand}
             onHover={onHover}
             highlightState={keyHighlight}
+            plain={plain}
           />
         );
       })}

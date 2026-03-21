@@ -13,22 +13,29 @@ interface KeyProps {
   vimCommand: VimCommand | null;
   onHover: (cmd: VimCommand | null, customKey: string | null) => void;
   highlightState?: HighlightState | null;
+  plain?: boolean;
 }
 
-export function Key({ keyData, qwertyLabel, customLabel, vimCommand, onHover, highlightState }: KeyProps) {
+export function Key({ keyData, qwertyLabel, customLabel, vimCommand, onHover, highlightState, plain }: KeyProps) {
   const { x, y, w, h, r, rx, ry, color } = keyData;
+
+  const showCategory = vimCommand && !plain;
 
   const style: React.CSSProperties = {
     left: x * (KEY_SIZE + GAP),
     top: y * (KEY_SIZE + GAP),
     width: w * KEY_SIZE + (w - 1) * GAP,
     height: h * KEY_SIZE + (h - 1) * GAP,
-    backgroundColor: vimCommand
-      ? `${categoryColors[vimCommand.category]}22`
-      : color,
-    borderColor: vimCommand
-      ? categoryColors[vimCommand.category]
-      : "rgba(0,0,0,0.3)",
+    backgroundColor: plain
+      ? "#313244"
+      : showCategory
+        ? `${categoryColors[vimCommand.category]}22`
+        : "#313244",
+    borderColor: plain
+      ? "#45475a"
+      : showCategory
+        ? categoryColors[vimCommand.category]
+        : "#45475a",
   };
 
   if (r !== 0) {
@@ -51,7 +58,7 @@ export function Key({ keyData, qwertyLabel, customLabel, vimCommand, onHover, hi
       <span className={styles.customLabel}>
         {displayLabel}
       </span>
-      {vimCommand && (
+      {showCategory && (
         <>
           <span className={styles.vimCommand}>{vimCommand.name}</span>
           <span
