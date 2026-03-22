@@ -105,6 +105,8 @@ export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highligh
           ...keyData,
           x: keyData.x + offsetX,
           y: keyData.y + offsetY,
+          rx: keyData.rx + offsetX,
+          ry: keyData.ry + offsetY,
         };
 
         // ハイライト判定: QWERTY位置またはマトリクスキーでマッチ

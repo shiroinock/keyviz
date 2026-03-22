@@ -39,7 +39,7 @@ export function Key({ keyData, qwertyLabel, customLabel, vimCommand, onHover, hi
   };
 
   if (r !== 0) {
-    style.transformOrigin = `${(rx - x) * KEY_SIZE}px ${(ry - y) * KEY_SIZE}px`;
+    style.transformOrigin = `${(rx - x) * (KEY_SIZE + GAP)}px ${(ry - y) * (KEY_SIZE + GAP)}px`;
     style.transform = `rotate(${r}deg)`;
   }
 
