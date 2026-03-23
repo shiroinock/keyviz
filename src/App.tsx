@@ -6,6 +6,7 @@ import { defaultCustomKeymap } from "./data/keymap";
 import { vimCommands, categoryColors, categoryLabels } from "./data/vim-commands";
 import { mergeWithNvimMaps } from "./utils/merge-vim-commands";
 import { parseVIAKeymap, parseVIAKeymapFull } from "./utils/via-keymap-parser";
+import { KeybindingProvider } from "./context/KeybindingContext";
 import { Keyboard } from "./components/Keyboard/Keyboard";
 import { CommandDetail } from "./components/CommandDetail/CommandDetail";
 import { LayoutLoader } from "./components/LayoutLoader/LayoutLoader";
@@ -76,7 +77,7 @@ export function App() {
   const noopHover = useCallback(() => {}, []);
 
   return (
-    <>
+    <KeybindingProvider>
       <header className={styles.header}>
         <div className={styles.headerTop}>
           <div>
@@ -181,6 +182,6 @@ export function App() {
           </div>
         ))}
       </div>
-    </>
+    </KeybindingProvider>
   );
 }
