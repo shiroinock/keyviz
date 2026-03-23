@@ -27,14 +27,20 @@ function commandToKeybinding(
 
 /**
  * ハードコードされた vimCommands からデフォルトの KeybindingConfig を生成。
- * すべてのコマンドを Normal モードに配置する（現行と同じ動作）。
+ * 各コマンドの modes フィールドに基づいて適切なモードに分配する。
  */
 export function createDefaultConfig(
   name = "QWERTY Default"
 ): KeybindingConfig {
   const bindings = emptyBindings();
 
-  bindings.n = vimCommands.map((cmd) => commandToKeybinding(cmd));
+  for (const cmd of vimCommands) {
+    const kb = commandToKeybinding(cmd);
+    const modes = cmd.modes ?? ["n"];
+    for (const mode of modes) {
+      bindings[mode].push(kb);
+    }
+  }
 
   const now = new Date().toISOString();
   return {

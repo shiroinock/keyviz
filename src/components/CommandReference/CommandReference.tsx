@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import type { VimCommand, VimCommandCategory, VimCommandSource, MergedVimCommand, HighlightEntry, VIAKeymapFull } from "../../types/vim";
+import type { VimMode } from "../../types/keybinding";
 import { vimCommands, categoryColors, categoryLabels, sourceLabels, sourceColors } from "../../data/vim-commands";
 import { resolveVimKey } from "../../utils/vim-key-resolver";
 import styles from "./CommandReference.module.css";
@@ -9,6 +10,7 @@ interface Props {
   viaKeymapFull?: VIAKeymapFull | null;
   onHighlightKeys: (keys: HighlightEntry[]) => void;
   mergedCommands?: MergedVimCommand[] | null;
+  activeVimMode?: VimMode;
 }
 
 /**
@@ -93,7 +95,7 @@ const allCategories: VimCommandCategory[] = [
 
 const allSources: VimCommandSource[] = ["hardcoded", "nvim-default", "plugin", "user"];
 
-export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys, mergedCommands }: Props) {
+export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys, mergedCommands, activeVimMode = "n" }: Props) {
   const [selectedCategories, setSelectedCategories] = useState<Set<VimCommandCategory>>(
     new Set(allCategories)
   );
@@ -119,6 +121,9 @@ export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys,
   const filteredCommands = useMemo(() => {
     const lowerSearch = searchText.toLowerCase();
     return commands.filter((cmd) => {
+      // モードフィルタ: コマンドの modes に activeVimMode が含まれるか
+      const modes = cmd.modes ?? ["n"];
+      if (!modes.includes(activeVimMode)) return false;
       if (!selectedCategories.has(cmd.category)) return false;
       if (hasSources && !selectedSources.has((cmd as MergedVimCommand).source ?? "hardcoded")) return false;
       if (searchText === "") return true;
@@ -129,7 +134,7 @@ export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys,
         translateKey(cmd.key, customKeymap, viaKeymapFull).toLowerCase().includes(lowerSearch)
       );
     });
-  }, [commands, selectedCategories, selectedSources, hasSources, searchText, customKeymap, viaKeymapFull]);
+  }, [commands, selectedCategories, selectedSources, hasSources, searchText, customKeymap, viaKeymapFull, activeVimMode]);
 
   // カテゴリでグループ化
   const grouped = useMemo(() => {

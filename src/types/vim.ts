@@ -39,6 +39,8 @@ export interface VimCommand {
   description: string;
   /** カテゴリ */
   category: VimCommandCategory;
+  /** 適用モード（省略時は ["n"]） */
+  modes?: import("./keybinding").VimMode[];
 }
 
 /** QWERTY キー → カスタム配列キー のマッピング */

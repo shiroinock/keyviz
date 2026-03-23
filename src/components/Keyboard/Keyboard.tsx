@@ -1,7 +1,9 @@
+import { useMemo } from "react";
 import type { KeyboardLayout } from "../../types/keyboard";
 import type { VimCommand, HighlightEntry } from "../../types/vim";
-import { getVimCommandByKey } from "../../data/vim-commands";
+import type { VimMode } from "../../types/keybinding";
 import { invertKeymap } from "../../data/keymap";
+import { useKeybindingContext } from "../../context/KeybindingContext";
 import { Key } from "./Key";
 import styles from "./Keyboard.module.css";
 
@@ -27,11 +29,19 @@ interface KeyboardProps {
   onHover: (cmd: VimCommand | null, customKey: string | null) => void;
   highlightKeys?: HighlightEntry[];
   plain?: boolean;
+  activeVimMode?: VimMode;
 }
 
-export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highlightKeys, plain }: KeyboardProps) {
+export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highlightKeys, plain, activeVimMode = "n" }: KeyboardProps) {
   // カスタム配列の逆引き: 出力文字 → QWERTY位置
   const inverseCustom = invertKeymap(customKeymap);
+
+  // KeybindingContext からモード別の lhs → Keybinding マップを取得
+  const { bindingsByLhs } = useKeybindingContext();
+  const modeBindings = useMemo(
+    () => bindingsByLhs[activeVimMode],
+    [bindingsByLhs, activeVimMode]
+  );
 
   // キーボード全体のバウンディングボックスを計算
   let minX = Infinity;
@@ -87,7 +97,10 @@ export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highligh
             // 出力文字 → 逆引きで QWERTY 位置 → Vim コマンド
             // (langmap と同じ変換: ユーザーが "l" を押すと Vim は "w" と解釈)
             const qwertyPos = inverseCustom[outputChar] ?? outputChar;
-            vimCommand = getVimCommandByKey(qwertyPos) ?? null;
+            const binding = modeBindings.get(qwertyPos);
+            vimCommand = binding
+              ? { key: binding.lhs, name: binding.name, description: binding.description, category: binding.category }
+              : null;
           } else if (outputChar) {
             // space, tab, enter 等の特殊キー
             displayLabel = outputChar;
@@ -97,7 +110,10 @@ export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highligh
           const qwertyKey = labelToQwerty[keyData.label] ?? null;
           if (qwertyKey) {
             displayLabel = customKeymap[qwertyKey] ?? qwertyKey;
-            vimCommand = getVimCommandByKey(qwertyKey) ?? null;
+            const binding = modeBindings.get(qwertyKey);
+            vimCommand = binding
+              ? { key: binding.lhs, name: binding.name, description: binding.description, category: binding.category }
+              : null;
           }
         }
 

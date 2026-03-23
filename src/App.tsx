@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import type { VimCommand, HighlightEntry, VIAKeymapFull } from "./types/vim";
+import type { VimMode } from "./types/keybinding";
 import { useKeyboardLayout } from "./hooks/useKeyboardLayout";
 import { useNvimMaps } from "./hooks/useNvimMaps";
 import { defaultCustomKeymap } from "./data/keymap";
@@ -12,6 +13,7 @@ import { CommandDetail } from "./components/CommandDetail/CommandDetail";
 import { LayoutLoader } from "./components/LayoutLoader/LayoutLoader";
 import { PracticeMode } from "./components/PracticeMode/PracticeMode";
 import { CommandReference } from "./components/CommandReference/CommandReference";
+import { ModeSelector } from "./components/ModeSelector/ModeSelector";
 import styles from "./App.module.css";
 
 export function App() {
@@ -21,6 +23,7 @@ export function App() {
   const [matrixKeymap, setMatrixKeymap] = useState<Record<string, string> | null>(null);
   const [viaKeymapFull, setViaKeymapFull] = useState<VIAKeymapFull | null>(null);
   const [mode, setMode] = useState<"visualize" | "practice" | "reference">("visualize");
+  const [activeVimMode, setActiveVimMode] = useState<VimMode>("n");
   const [highlightKeys, setHighlightKeys] = useState<HighlightEntry[]>([]);
   const [keymapFileName, setKeymapFileName] = useState<string | null>(null);
   const [matrixCols, setMatrixCols] = useState(7); // Corne v4 default
@@ -100,25 +103,30 @@ export function App() {
               )}
             </div>
           </div>
-          <div className={styles.modeTabs}>
-            <button
-              className={`${styles.modeTab} ${mode === "visualize" ? styles.modeTabActive : ""}`}
-              onClick={() => setMode("visualize")}
-            >
-              可視化
-            </button>
-            <button
-              className={`${styles.modeTab} ${mode === "practice" ? styles.modeTabActive : ""}`}
-              onClick={() => setMode("practice")}
-            >
-              練習
-            </button>
-            <button
-              className={`${styles.modeTab} ${mode === "reference" ? styles.modeTabActive : ""}`}
-              onClick={() => setMode("reference")}
-            >
-              辞書
-            </button>
+          <div className={styles.headerRight}>
+            <div className={styles.modeTabs}>
+              <button
+                className={`${styles.modeTab} ${mode === "visualize" ? styles.modeTabActive : ""}`}
+                onClick={() => setMode("visualize")}
+              >
+                可視化
+              </button>
+              <button
+                className={`${styles.modeTab} ${mode === "practice" ? styles.modeTabActive : ""}`}
+                onClick={() => setMode("practice")}
+              >
+                練習
+              </button>
+              <button
+                className={`${styles.modeTab} ${mode === "reference" ? styles.modeTabActive : ""}`}
+                onClick={() => setMode("reference")}
+              >
+                辞書
+              </button>
+            </div>
+            {mode !== "practice" && (
+              <ModeSelector activeMode={activeVimMode} onModeChange={setActiveVimMode} />
+            )}
           </div>
         </div>
       </header>
@@ -151,6 +159,7 @@ export function App() {
           onHover={mode === "visualize" ? handleHover : noopHover}
           highlightKeys={mode === "practice" || mode === "reference" ? highlightKeys : undefined}
           plain={mode === "practice" || mode === "reference"}
+          activeVimMode={activeVimMode}
         />
       </div>
 
@@ -161,6 +170,7 @@ export function App() {
             viaKeymapFull={viaKeymapFull}
             onHighlightKeys={handleHighlightKeys}
             mergedCommands={mergedCommands}
+            activeVimMode={activeVimMode}
           />
         </div>
       )}
