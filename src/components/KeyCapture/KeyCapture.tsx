@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { normalizeKeyEvent } from "../../utils/key-event";
 import styles from "./KeyCapture.module.css";
 
@@ -8,43 +8,39 @@ export interface KeyCaptureProps {
 }
 
 export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
-  // 現在キャプチャしているキーの Vim 表記
+  const capturedKeyRef = useRef<string | null>(null);
   const [capturedKey, setCapturedKey] = useState<string | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      e.preventDefault();
-
       const vimKey = normalizeKeyEvent(e);
 
-      // 修飾キー単体は無視
       if (vimKey === "") return;
 
-      // Escape はキャンセル操作
+      e.preventDefault();
+
       if (e.key === "Escape") {
         onCancel();
         return;
       }
 
-      // Enter で確定（キャプチャ済みの場合のみ）
-      if (e.key === "Enter" && capturedKey !== null) {
-        onConfirm(capturedKey);
+      if (e.key === "Enter" && capturedKeyRef.current !== null) {
+        onConfirm(capturedKeyRef.current);
         return;
       }
 
-      // 同じキーを再度押した場合は確定
-      if (vimKey === capturedKey) {
-        onConfirm(capturedKey);
+      if (vimKey === capturedKeyRef.current) {
+        onConfirm(capturedKeyRef.current);
         return;
       }
 
-      // 新しいキーをキャプチャ
+      capturedKeyRef.current = vimKey;
       setCapturedKey(vimKey);
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [capturedKey, onConfirm, onCancel]);
+  }, [onConfirm, onCancel]);
 
   return (
     <div className={styles.container}>
