@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-
 import styles from "./App.module.css";
 import { CommandDetail } from "./components/CommandDetail/CommandDetail";
 import { CommandReference } from "./components/CommandReference/CommandReference";
@@ -30,7 +29,6 @@ import { parseVIAKeymap, parseVIAKeymapFull } from "./utils/via-keymap-parser";
 
 const DEFAULT_MATRIX_COLS = 7;
 const KEYMAP_LOADED_LABEL = "keymap loaded";
-const UNKNOWN_LAYOUT_NAME = "Unknown";
 
 export function App() {
   const { layout, loadFromJSON, error } = useKeyboardLayout();
@@ -96,7 +94,7 @@ export function App() {
         if (parsed.matrix?.cols) {
           setMatrixCols(parsed.matrix.cols);
         }
-        saveLayout(jsonString, parsed.name || UNKNOWN_LAYOUT_NAME);
+        saveLayout(jsonString, parsed.name || "Unknown");
       } catch {
         // ignore
       }
