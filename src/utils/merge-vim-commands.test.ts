@@ -67,7 +67,7 @@ describe("mergeWithNvimMaps", () => {
 
   it("normal mode 以外のマップはスキップされる", () => {
     const nvimMaps = [
-      makeNvimMap({ lhs: "jk", mode: "i", description: "escape" }),
+      makeNvimMap({ lhs: "jk", mode: "x", description: "escape" }),
     ];
     const result = mergeWithNvimMaps(baseCommands, nvimMaps);
     expect(result).toHaveLength(3);
@@ -79,23 +79,23 @@ describe("mergeWithNvimMaps", () => {
         key: "<C-f>",
         name: "Scroll",
         description: "前方スクロール",
-        category: "scroll",
+        category: "motion",
       },
     ];
     const nvimMaps = [
-      makeNvimMap({ lhs: "<C-F>", source: "default", description: "scroll" }),
+      makeNvimMap({ lhs: "<C-F>", source: "nvim-default", description: "scroll" }),
     ];
     const result = mergeWithNvimMaps(commands, nvimMaps);
 
     const cf = result.find((c) => c.key === "<C-f>");
-    expect(cf?.source).toBe("default");
+    expect(cf?.source).toBe("nvim-default");
     expect(cf?.nvimOverride).toBe(true);
   });
 
   it("同じキーの重複 nvim マップは最初のもののみ反映される", () => {
     const nvimMaps = [
       makeNvimMap({ lhs: "gd", description: "first", source: "user" }),
-      makeNvimMap({ lhs: "gd", description: "second", source: "default" }),
+      makeNvimMap({ lhs: "gd", description: "second", source: "nvim-default" }),
     ];
     const result = mergeWithNvimMaps(baseCommands, nvimMaps);
 
