@@ -48,3 +48,14 @@ export interface KeybindingConfig {
 export function emptyBindings(): Record<VimMode, Keybinding[]> {
   return { n: [], v: [], x: [], o: [], i: [], s: [], c: [], t: [] };
 }
+
+/** プリセット配列の識別子 */
+export type PresetId = "qwerty" | "colemak-dh" | "dvorak" | "colemak";
+
+/** キーボード配列プリセット */
+export interface KeybindingPreset {
+  id: PresetId;
+  name: string;
+  description: string;
+  keymap: Record<string, string>;
+}
