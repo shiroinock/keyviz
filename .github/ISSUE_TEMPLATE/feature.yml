@@ -1,0 +1,37 @@
+name: 機能追加
+description: 新機能や改善の提案
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: 何をしたいか、1-2文で簡潔に
+      placeholder: "例: キーボードの複数レイヤーを切り替えて表示できるようにする"
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: やること
+      description: 具体的なタスクがあれば箇条書きで（なければ issue-enrichment で補完します）
+      placeholder: |
+        - タスク1
+        - タスク2
+
+  - type: textarea
+    id: related
+    attributes:
+      label: 関連
+      description: 関連する既存コード・Issue・背景情報
+
+  - type: dropdown
+    id: additional-labels
+    attributes:
+      label: 追加ラベル
+      description: 該当するものがあれば選択
+      multiple: true
+      options:
+        - future
+        - keybinding-edit
