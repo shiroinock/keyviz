@@ -1,5 +1,5 @@
-import type { VimCommand } from "../../types/vim";
 import { categoryColors, categoryLabels } from "../../data/vim-commands";
+import type { VimCommand } from "../../types/vim";
 import styles from "./CommandDetail.module.css";
 
 interface CommandDetailProps {

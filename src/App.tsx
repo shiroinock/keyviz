@@ -1,37 +1,53 @@
-import { useState, useCallback, useMemo } from "react";
-import type { VimCommand, HighlightEntry, VIAKeymapFull } from "./types/vim";
-import type { VimMode } from "./types/keybinding";
+import { useCallback, useMemo, useState } from "react";
+import styles from "./App.module.css";
+import { CommandDetail } from "./components/CommandDetail/CommandDetail";
+import { CommandReference } from "./components/CommandReference/CommandReference";
+import { Keyboard } from "./components/Keyboard/Keyboard";
+import { LayoutLoader } from "./components/LayoutLoader/LayoutLoader";
+import { ModeSelector } from "./components/ModeSelector/ModeSelector";
+import { PracticeMode } from "./components/PracticeMode/PracticeMode";
+import { KeybindingProvider } from "./context/KeybindingContext";
+import { defaultCustomKeymap } from "./data/keymap";
+import {
+  categoryColors,
+  categoryLabels,
+  vimCommands,
+} from "./data/vim-commands";
 import { useKeyboardLayout } from "./hooks/useKeyboardLayout";
 import { useNvimMaps } from "./hooks/useNvimMaps";
-import { defaultCustomKeymap } from "./data/keymap";
-import { vimCommands, categoryColors, categoryLabels } from "./data/vim-commands";
+import type { VimMode } from "./types/keybinding";
+import type { HighlightEntry, VIAKeymapFull, VimCommand } from "./types/vim";
 import { mergeWithNvimMaps } from "./utils/merge-vim-commands";
 import { parseVIAKeymap, parseVIAKeymapFull } from "./utils/via-keymap-parser";
-import { KeybindingProvider } from "./context/KeybindingContext";
-import { Keyboard } from "./components/Keyboard/Keyboard";
-import { CommandDetail } from "./components/CommandDetail/CommandDetail";
-import { LayoutLoader } from "./components/LayoutLoader/LayoutLoader";
-import { PracticeMode } from "./components/PracticeMode/PracticeMode";
-import { CommandReference } from "./components/CommandReference/CommandReference";
-import { ModeSelector } from "./components/ModeSelector/ModeSelector";
-import styles from "./App.module.css";
 
 export function App() {
   const { layout, loadFromJSON, error } = useKeyboardLayout();
   const [hoveredCommand, setHoveredCommand] = useState<VimCommand | null>(null);
   const [hoveredCustomKey, setHoveredCustomKey] = useState<string | null>(null);
-  const [matrixKeymap, setMatrixKeymap] = useState<Record<string, string> | null>(null);
-  const [viaKeymapFull, setViaKeymapFull] = useState<VIAKeymapFull | null>(null);
-  const [mode, setMode] = useState<"visualize" | "practice" | "reference">("visualize");
+  const [matrixKeymap, setMatrixKeymap] = useState<Record<
+    string,
+    string
+  > | null>(null);
+  const [viaKeymapFull, setViaKeymapFull] = useState<VIAKeymapFull | null>(
+    null,
+  );
+  const [mode, setMode] = useState<"visualize" | "practice" | "reference">(
+    "visualize",
+  );
   const [activeVimMode, setActiveVimMode] = useState<VimMode>("n");
   const [highlightKeys, setHighlightKeys] = useState<HighlightEntry[]>([]);
   const [keymapFileName, setKeymapFileName] = useState<string | null>(null);
   const [matrixCols, setMatrixCols] = useState(7); // Corne v4 default
-  const { nvimMaps, loading: nvimLoading, error: nvimError, refresh: refreshNvim } = useNvimMaps();
+  const {
+    nvimMaps,
+    loading: nvimLoading,
+    error: nvimError,
+    refresh: refreshNvim,
+  } = useNvimMaps();
 
   const mergedCommands = useMemo(
     () => (nvimMaps ? mergeWithNvimMaps(vimCommands, nvimMaps) : null),
-    [nvimMaps]
+    [nvimMaps],
   );
 
   const handleHover = (cmd: VimCommand | null, customKey: string | null) => {
@@ -56,7 +72,7 @@ export function App() {
         // ignore
       }
     },
-    [loadFromJSON]
+    [loadFromJSON],
   );
 
   const handleLoadKeymap = useCallback(
@@ -70,11 +86,11 @@ export function App() {
         setKeymapFileName("keymap loaded");
       } catch (e) {
         setKeymapFileName(
-          `Error: ${e instanceof Error ? e.message : "parse failed"}`
+          `Error: ${e instanceof Error ? e.message : "parse failed"}`,
         );
       }
     },
-    [matrixCols]
+    [matrixCols],
   );
 
   const noopHover = useCallback(() => {}, []);
@@ -89,14 +105,22 @@ export function App() {
               カスタムキーボード配列で Neovim キーバインドを可視化
             </p>
             <div className={styles.nvimStatus}>
-              {nvimLoading && <span className={styles.nvimLoading}>nvim 読込中...</span>}
-              {nvimError && <span className={styles.nvimError}>nvim 未接続</span>}
+              {nvimLoading && (
+                <span className={styles.nvimLoading}>nvim 読込中...</span>
+              )}
+              {nvimError && (
+                <span className={styles.nvimError}>nvim 未接続</span>
+              )}
               {nvimMaps && (
                 <>
                   <span className={styles.nvimConnected}>
                     nvim: {nvimMaps.filter((m) => m.mode === "n").length} maps
                   </span>
-                  <button className={styles.nvimRefresh} onClick={refreshNvim}>
+                  <button
+                    type="button"
+                    className={styles.nvimRefresh}
+                    onClick={refreshNvim}
+                  >
                     再取得
                   </button>
                 </>
@@ -106,18 +130,21 @@ export function App() {
           <div className={styles.headerRight}>
             <div className={styles.modeTabs}>
               <button
+                type="button"
                 className={`${styles.modeTab} ${mode === "visualize" ? styles.modeTabActive : ""}`}
                 onClick={() => setMode("visualize")}
               >
                 可視化
               </button>
               <button
+                type="button"
                 className={`${styles.modeTab} ${mode === "practice" ? styles.modeTabActive : ""}`}
                 onClick={() => setMode("practice")}
               >
                 練習
               </button>
               <button
+                type="button"
                 className={`${styles.modeTab} ${mode === "reference" ? styles.modeTabActive : ""}`}
                 onClick={() => setMode("reference")}
               >
@@ -125,7 +152,10 @@ export function App() {
               </button>
             </div>
             {mode !== "practice" && (
-              <ModeSelector activeMode={activeVimMode} onModeChange={setActiveVimMode} />
+              <ModeSelector
+                activeMode={activeVimMode}
+                onModeChange={setActiveVimMode}
+              />
             )}
           </div>
         </div>
@@ -151,13 +181,19 @@ export function App() {
         </div>
       )}
 
-      <div className={`${styles.keyboardWrapper} ${mode === "reference" ? styles.keyboardSticky : ""}`}>
+      <div
+        className={`${styles.keyboardWrapper} ${mode === "reference" ? styles.keyboardSticky : ""}`}
+      >
         <Keyboard
           layout={layout}
           customKeymap={defaultCustomKeymap}
           matrixKeymap={matrixKeymap}
           onHover={mode === "visualize" ? handleHover : noopHover}
-          highlightKeys={mode === "practice" || mode === "reference" ? highlightKeys : undefined}
+          highlightKeys={
+            mode === "practice" || mode === "reference"
+              ? highlightKeys
+              : undefined
+          }
           plain={mode === "practice" || mode === "reference"}
           activeVimMode={activeVimMode}
         />
@@ -187,7 +223,10 @@ export function App() {
       <div className={styles.legend}>
         {Object.entries(categoryColors).map(([cat, color]) => (
           <div key={cat} className={styles.legendItem}>
-            <span className={styles.legendDot} style={{ backgroundColor: color }} />
+            <span
+              className={styles.legendDot}
+              style={{ backgroundColor: color }}
+            />
             {categoryLabels[cat]}
           </div>
         ))}

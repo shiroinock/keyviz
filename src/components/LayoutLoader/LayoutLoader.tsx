@@ -8,7 +8,12 @@ interface FileDropZoneProps {
   onLoad: (json: string) => void;
 }
 
-function FileDropZone({ label, description, fileName, onLoad }: FileDropZoneProps) {
+function FileDropZone({
+  label,
+  description,
+  fileName,
+  onLoad,
+}: FileDropZoneProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = useCallback(
@@ -20,7 +25,7 @@ function FileDropZone({ label, description, fileName, onLoad }: FileDropZoneProp
       };
       reader.readAsText(file);
     },
-    [onLoad]
+    [onLoad],
   );
 
   const handleDrop = useCallback(
@@ -30,21 +35,31 @@ function FileDropZone({ label, description, fileName, onLoad }: FileDropZoneProp
       const file = e.dataTransfer.files[0];
       if (file) handleFile(file);
     },
-    [handleFile]
+    [handleFile],
   );
 
   return (
     <div className={styles.dropzoneGroup}>
       <span className={styles.label}>{label}</span>
+      {/* biome-ignore lint/a11y/useSemanticElements: ドロップゾーンは drag&drop 対応のため div が必要 */}
       <div
+        role="button"
+        tabIndex={0}
         className={styles.dropzone}
         onDrop={handleDrop}
         onDragOver={(e) => {
           e.preventDefault();
           e.currentTarget.classList.add(styles.dropzoneActive);
         }}
-        onDragLeave={(e) => e.currentTarget.classList.remove(styles.dropzoneActive)}
+        onDragLeave={(e) =>
+          e.currentTarget.classList.remove(styles.dropzoneActive)
+        }
         onClick={() => fileInputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            fileInputRef.current?.click();
+          }
+        }}
       >
         {fileName ? (
           <span className={styles.fileName}>{fileName}</span>

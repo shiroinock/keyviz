@@ -44,7 +44,7 @@ export const defaultCustomKeymap: Record<string, string> = {
  * カスタム配列の出力文字 → QWERTY物理位置 の逆引き
  */
 export function invertKeymap(
-  keymap: Record<string, string>
+  keymap: Record<string, string>,
 ): Record<string, string> {
   const inverted: Record<string, string> = {};
   for (const [qwerty, custom] of Object.entries(keymap)) {

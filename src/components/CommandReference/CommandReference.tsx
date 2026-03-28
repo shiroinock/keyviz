@@ -1,7 +1,20 @@
-import { useState, useMemo, useCallback } from "react";
-import type { VimCommand, VimCommandCategory, VimCommandSource, MergedVimCommand, HighlightEntry, VIAKeymapFull } from "../../types/vim";
+import { useCallback, useMemo, useState } from "react";
+import {
+  categoryColors,
+  categoryLabels,
+  sourceColors,
+  sourceLabels,
+  vimCommands,
+} from "../../data/vim-commands";
 import type { VimMode } from "../../types/keybinding";
-import { vimCommands, categoryColors, categoryLabels, sourceLabels, sourceColors } from "../../data/vim-commands";
+import type {
+  HighlightEntry,
+  MergedVimCommand,
+  VIAKeymapFull,
+  VimCommand,
+  VimCommandCategory,
+  VimCommandSource,
+} from "../../types/vim";
 import { resolveVimKey } from "../../utils/vim-key-resolver";
 import styles from "./CommandReference.module.css";
 
@@ -90,17 +103,35 @@ function vimKeyToHighlights(
 }
 
 const allCategories: VimCommandCategory[] = [
-  "motion", "operator", "edit", "insert", "search", "visual", "textobj", "misc",
+  "motion",
+  "operator",
+  "edit",
+  "insert",
+  "search",
+  "visual",
+  "textobj",
+  "misc",
 ];
 
-const allSources: VimCommandSource[] = ["hardcoded", "nvim-default", "plugin", "user"];
+const allSources: VimCommandSource[] = [
+  "hardcoded",
+  "nvim-default",
+  "plugin",
+  "user",
+];
 
-export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys, mergedCommands, activeVimMode = "n" }: Props) {
-  const [selectedCategories, setSelectedCategories] = useState<Set<VimCommandCategory>>(
-    new Set(allCategories)
-  );
+export function CommandReference({
+  customKeymap,
+  viaKeymapFull,
+  onHighlightKeys,
+  mergedCommands,
+  activeVimMode = "n",
+}: Props) {
+  const [selectedCategories, setSelectedCategories] = useState<
+    Set<VimCommandCategory>
+  >(new Set(allCategories));
   const [selectedSources, setSelectedSources] = useState<Set<VimCommandSource>>(
-    new Set(allSources)
+    new Set(allSources),
   );
   const [searchText, setSearchText] = useState("");
 
@@ -111,7 +142,7 @@ export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys,
     (cmd: VimCommand) => {
       onHighlightKeys(vimKeyToHighlights(cmd.key, customKeymap, viaKeymapFull));
     },
-    [onHighlightKeys, customKeymap, viaKeymapFull]
+    [onHighlightKeys, customKeymap, viaKeymapFull],
   );
 
   const handleRowLeave = useCallback(() => {
@@ -125,23 +156,39 @@ export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys,
       const modes = cmd.modes ?? ["n"];
       if (!modes.includes(activeVimMode)) return false;
       if (!selectedCategories.has(cmd.category)) return false;
-      if (hasSources && !selectedSources.has((cmd as MergedVimCommand).source ?? "hardcoded")) return false;
+      if (
+        hasSources &&
+        !selectedSources.has((cmd as MergedVimCommand).source ?? "hardcoded")
+      )
+        return false;
       if (searchText === "") return true;
       return (
         cmd.key.toLowerCase().includes(lowerSearch) ||
         cmd.name.toLowerCase().includes(lowerSearch) ||
         cmd.description.toLowerCase().includes(lowerSearch) ||
-        translateKey(cmd.key, customKeymap, viaKeymapFull).toLowerCase().includes(lowerSearch)
+        translateKey(cmd.key, customKeymap, viaKeymapFull)
+          .toLowerCase()
+          .includes(lowerSearch)
       );
     });
-  }, [commands, selectedCategories, selectedSources, hasSources, searchText, customKeymap, viaKeymapFull, activeVimMode]);
+  }, [
+    commands,
+    selectedCategories,
+    selectedSources,
+    hasSources,
+    searchText,
+    customKeymap,
+    viaKeymapFull,
+    activeVimMode,
+  ]);
 
   // カテゴリでグループ化
   const grouped = useMemo(() => {
     const groups: Partial<Record<VimCommandCategory, VimCommand[]>> = {};
     for (const cmd of filteredCommands) {
       if (!groups[cmd.category]) groups[cmd.category] = [];
-      groups[cmd.category]!.push(cmd);
+      const group = groups[cmd.category];
+      if (group) group.push(cmd);
     }
     return groups;
   }, [filteredCommands]);
@@ -176,11 +223,15 @@ export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys,
         <div className={styles.categories}>
           {allCategories.map((cat) => (
             <button
+              type="button"
               key={cat}
               className={`${styles.catButton} ${selectedCategories.has(cat) ? styles.catSelected : ""}`}
               style={
                 selectedCategories.has(cat)
-                  ? { borderColor: categoryColors[cat], color: categoryColors[cat] }
+                  ? {
+                      borderColor: categoryColors[cat],
+                      color: categoryColors[cat],
+                    }
                   : undefined
               }
               onClick={() => toggleCategory(cat)}
@@ -193,11 +244,15 @@ export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys,
           <div className={styles.sources}>
             {allSources.map((src) => (
               <button
+                type="button"
                 key={src}
                 className={`${styles.srcButton} ${selectedSources.has(src) ? styles.srcSelected : ""}`}
                 style={
                   selectedSources.has(src)
-                    ? { borderColor: sourceColors[src], color: sourceColors[src] }
+                    ? {
+                        borderColor: sourceColors[src],
+                        color: sourceColors[src],
+                      }
                     : undefined
                 }
                 onClick={() => toggleSource(src)}
@@ -238,8 +293,12 @@ export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys,
                   </tr>
                 </thead>
                 <tbody>
-                  {grouped[cat]!.map((cmd) => {
-                    const translated = translateKey(cmd.key, customKeymap, viaKeymapFull);
+                  {(grouped[cat] ?? []).map((cmd) => {
+                    const translated = translateKey(
+                      cmd.key,
+                      customKeymap,
+                      viaKeymapFull,
+                    );
                     const isDifferent = translated !== cmd.key;
                     const source = (cmd as MergedVimCommand).source;
                     return (
@@ -252,7 +311,9 @@ export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys,
                         <td className={styles.cellKey}>
                           <code>{cmd.key}</code>
                         </td>
-                        <td className={`${styles.cellKey} ${isDifferent ? styles.cellDiff : ""}`}>
+                        <td
+                          className={`${styles.cellKey} ${isDifferent ? styles.cellDiff : ""}`}
+                        >
                           <code>{translated}</code>
                         </td>
                         <td className={styles.cellName}>{cmd.name}</td>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { NvimMapping } from "../types/vim";
 import { parseNvimMapOutput } from "../utils/nvim-map-parser";
 

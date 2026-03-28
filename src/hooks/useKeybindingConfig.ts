@@ -1,17 +1,22 @@
-import { useReducer, useCallback, useMemo } from "react";
-import type { NvimMapping } from "../types/vim";
+import { useCallback, useMemo, useReducer } from "react";
 import type {
   Keybinding,
   KeybindingConfig,
   VimMode,
 } from "../types/keybinding";
+import type { NvimMapping } from "../types/vim";
 import { createDefaultConfig } from "../utils/keybinding-defaults";
 
 // ── Actions ──
 
 type KeybindingAction =
   | { type: "SET_CONFIG"; config: KeybindingConfig }
-  | { type: "UPDATE_BINDING"; mode: VimMode; index: number; binding: Partial<Keybinding> }
+  | {
+      type: "UPDATE_BINDING";
+      mode: VimMode;
+      index: number;
+      binding: Partial<Keybinding>;
+    }
   | { type: "ADD_BINDING"; mode: VimMode; binding: Keybinding }
   | { type: "REMOVE_BINDING"; mode: VimMode; index: number }
   | { type: "SWAP_BINDING"; mode: VimMode; indexA: number; indexB: number }
@@ -23,7 +28,7 @@ type KeybindingAction =
 
 function keybindingReducer(
   state: KeybindingConfig,
-  action: KeybindingAction
+  action: KeybindingAction,
 ): KeybindingConfig {
   const now = new Date().toISOString();
 
@@ -56,7 +61,7 @@ function keybindingReducer(
 
     case "REMOVE_BINDING": {
       const modeBindings = state.bindings[action.mode].filter(
-        (_, i) => i !== action.index
+        (_, i) => i !== action.index,
       );
       return {
         ...state,
@@ -104,7 +109,7 @@ function keybindingReducer(
 export function useKeybindingConfig(initial?: KeybindingConfig) {
   const [config, dispatch] = useReducer(
     keybindingReducer,
-    initial ?? createDefaultConfig()
+    initial ?? createDefaultConfig(),
   );
 
   /** lhs でバインディングを O(1) 検索するためのマップ */
@@ -124,7 +129,7 @@ export function useKeybindingConfig(initial?: KeybindingConfig) {
     (mode: VimMode, lhs: string): Keybinding | undefined => {
       return bindingsByLhs[mode]?.get(lhs);
     },
-    [bindingsByLhs]
+    [bindingsByLhs],
   );
 
   return { config, dispatch, getBinding, bindingsByLhs };

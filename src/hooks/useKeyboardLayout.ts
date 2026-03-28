@@ -1,11 +1,11 @@
-import { useState, useCallback } from "react";
-import type { KeyboardLayout } from "../types/keyboard";
-import { parseVIAorKLE, parseKLE } from "../utils/kle-parser";
+import { useCallback, useState } from "react";
 import defaultLayoutJSON from "../data/default-layout.json";
+import type { KeyboardLayout } from "../types/keyboard";
+import { parseKLE, parseVIAorKLE } from "../utils/kle-parser";
 
 export function useKeyboardLayout() {
   const [layout, setLayout] = useState<KeyboardLayout>(() =>
-    parseKLE(defaultLayoutJSON.layouts.keymap, defaultLayoutJSON.name)
+    parseKLE(defaultLayoutJSON.layouts.keymap, defaultLayoutJSON.name),
   );
   const [error, setError] = useState<string | null>(null);
 

@@ -1,6 +1,10 @@
 import { createContext, useContext } from "react";
-import type { Keybinding, KeybindingConfig, VimMode } from "../types/keybinding";
 import { useKeybindingConfig } from "../hooks/useKeybindingConfig";
+import type {
+  Keybinding,
+  KeybindingConfig,
+  VimMode,
+} from "../types/keybinding";
 
 interface KeybindingContextValue {
   config: KeybindingConfig;
@@ -30,7 +34,7 @@ export function useKeybindingContext(): KeybindingContextValue {
   const ctx = useContext(KeybindingContext);
   if (!ctx) {
     throw new Error(
-      "useKeybindingContext must be used within a KeybindingProvider"
+      "useKeybindingContext must be used within a KeybindingProvider",
     );
   }
   return ctx;

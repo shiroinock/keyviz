@@ -1,15 +1,15 @@
-import { useState, useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { invertKeymap } from "../data/keymap";
+import { decomposeVimKey, vimCommands } from "../data/vim-commands";
 import type {
-  VimCommand,
-  VimCommandCategory,
+  KeyInputSpec,
+  LayerKeyInfo,
+  ModifierKeyInfo,
   PracticeScore,
   VIAKeymapFull,
-  KeyInputSpec,
-  ModifierKeyInfo,
-  LayerKeyInfo,
+  VimCommand,
+  VimCommandCategory,
 } from "../types/vim";
-import { vimCommands, decomposeVimKey } from "../data/vim-commands";
-import { invertKeymap } from "../data/keymap";
 import { shiftMap } from "../utils/via-keymap-parser";
 
 /**
@@ -40,7 +40,7 @@ function resolveKeyInput(
     // Shift + ベースキー
     const shiftedOutput = /^[a-z]$/.test(outputChar)
       ? outputChar.toUpperCase()
-      : shiftMap[outputChar] ?? outputChar;
+      : (shiftMap[outputChar] ?? outputChar);
 
     const shiftMod = findShiftModifier(viaKeymapFull);
     return {
@@ -55,7 +55,11 @@ function resolveKeyInput(
   // --- 2. VIA キーマップのレイヤーにある場合 ---
   if (viaKeymapFull) {
     // レイヤー上で直接見つかるか（S(KC_4) → "$" 等）
-    for (let layerIdx = 0; layerIdx < viaKeymapFull.layerKeys.length; layerIdx++) {
+    for (
+      let layerIdx = 0;
+      layerIdx < viaKeymapFull.layerKeys.length;
+      layerIdx++
+    ) {
       const layerMap = viaKeymapFull.layerKeys[layerIdx];
       const targetLayer = layerIdx + 1; // layerKeys[0] = layer 1
 
@@ -99,7 +103,7 @@ function resolveKeyInput(
 
           const shiftedOutput = /^[a-z]$/.test(base)
             ? base.toUpperCase()
-            : shiftMap[base] ?? base;
+            : (shiftMap[base] ?? base);
 
           return {
             targetQwertyKey: qwertyPos,
@@ -117,12 +121,17 @@ function resolveKeyInput(
   return null;
 }
 
-function findShiftModifier(viaKeymapFull?: VIAKeymapFull | null): ModifierKeyInfo | null {
+function findShiftModifier(
+  viaKeymapFull?: VIAKeymapFull | null,
+): ModifierKeyInfo | null {
   if (!viaKeymapFull) return null;
   return viaKeymapFull.modifiers.find((m) => m.modifier === "shift") ?? null;
 }
 
-function findLayerKey(viaKeymapFull: VIAKeymapFull, layer: number): LayerKeyInfo | null {
+function findLayerKey(
+  viaKeymapFull: VIAKeymapFull,
+  layer: number,
+): LayerKeyInfo | null {
   return viaKeymapFull.layerTaps.find((lt) => lt.layer === layer) ?? null;
 }
 
@@ -155,12 +164,29 @@ export function usePractice(
   customKeymap: Record<string, string>,
   viaKeymapFull?: VIAKeymapFull | null,
 ) {
-  const [selectedCategories, setSelectedCategories] = useState<Set<VimCommandCategory>>(
-    () => new Set<VimCommandCategory>(["motion", "edit", "search", "insert", "visual", "operator", "misc"])
+  const [selectedCategories, setSelectedCategories] = useState<
+    Set<VimCommandCategory>
+  >(
+    () =>
+      new Set<VimCommandCategory>([
+        "motion",
+        "edit",
+        "search",
+        "insert",
+        "visual",
+        "operator",
+        "misc",
+      ]),
   );
   const [currentCommand, setCurrentCommand] = useState<VimCommand | null>(null);
-  const [score, setScore] = useState<PracticeScore>({ correct: 0, total: 0, streak: 0 });
-  const [lastResult, setLastResult] = useState<"correct" | "incorrect" | null>(null);
+  const [score, setScore] = useState<PracticeScore>({
+    correct: 0,
+    total: 0,
+    streak: 0,
+  });
+  const [lastResult, setLastResult] = useState<"correct" | "incorrect" | null>(
+    null,
+  );
 
   // 各コマンドの入力方法を事前解決
   const inputSpecMap = useMemo(() => {
@@ -196,14 +222,15 @@ export function usePractice(
         setCurrentCommand(null);
         return;
       }
-      const candidates = eligibleCommands.length > 1
-        ? eligibleCommands.filter((cmd) => cmd.key !== exclude?.key)
-        : eligibleCommands;
+      const candidates =
+        eligibleCommands.length > 1
+          ? eligibleCommands.filter((cmd) => cmd.key !== exclude?.key)
+          : eligibleCommands;
       const next = candidates[Math.floor(Math.random() * candidates.length)];
       setCurrentCommand(next);
       setLastResult(null);
     },
-    [eligibleCommands]
+    [eligibleCommands],
   );
 
   // 練習開始
@@ -231,7 +258,7 @@ export function usePractice(
       }));
       return result;
     },
-    [currentCommand, currentInputSpec]
+    [currentCommand, currentInputSpec],
   );
 
   // カテゴリの切り替え

@@ -1,6 +1,6 @@
-import type { VIAKeymapFull } from "../types/vim";
-import { decomposeVimKey } from "../data/vim-commands";
 import { invertKeymap } from "../data/keymap";
+import { decomposeVimKey } from "../data/vim-commands";
+import type { VIAKeymapFull } from "../types/vim";
 import { shiftMap } from "./via-keymap-parser";
 
 /**
@@ -86,7 +86,11 @@ export function resolveChar(
   if (viaKeymapFull) {
     const inverseCustom = invertKeymap(customKeymap);
 
-    for (let layerIdx = 0; layerIdx < viaKeymapFull.layerKeys.length; layerIdx++) {
+    for (
+      let layerIdx = 0;
+      layerIdx < viaKeymapFull.layerKeys.length;
+      layerIdx++
+    ) {
       const layerMap = viaKeymapFull.layerKeys[layerIdx];
       const targetLayer = layerIdx + 1;
 
@@ -94,7 +98,9 @@ export function resolveChar(
       for (const [matrixKey, outputChar] of Object.entries(layerMap)) {
         if (outputChar !== ch) continue;
 
-        const layerKey = viaKeymapFull.layerTaps.find((lt) => lt.layer === targetLayer);
+        const layerKey = viaKeymapFull.layerTaps.find(
+          (lt) => lt.layer === targetLayer,
+        );
         if (!layerKey) continue;
 
         const baseOutputAtPos = viaKeymapFull.baseKeys[matrixKey];
@@ -117,10 +123,14 @@ export function resolveChar(
         for (const [matrixKey, outputChar] of Object.entries(layerMap)) {
           if (outputChar !== base) continue;
 
-          const layerKey = viaKeymapFull.layerTaps.find((lt) => lt.layer === targetLayer);
+          const layerKey = viaKeymapFull.layerTaps.find(
+            (lt) => lt.layer === targetLayer,
+          );
           if (!layerKey) continue;
 
-          const shiftMod = viaKeymapFull.modifiers.find((m) => m.modifier === "shift");
+          const shiftMod = viaKeymapFull.modifiers.find(
+            (m) => m.modifier === "shift",
+          );
           const baseOutputAtPos = viaKeymapFull.baseKeys[matrixKey];
           const qwertyPos = baseOutputAtPos
             ? (inverseCustom[baseOutputAtPos] ?? baseOutputAtPos)

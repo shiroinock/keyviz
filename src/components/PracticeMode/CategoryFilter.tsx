@@ -1,9 +1,15 @@
-import type { VimCommandCategory } from "../../types/vim";
 import { categoryColors, categoryLabels } from "../../data/vim-commands";
+import type { VimCommandCategory } from "../../types/vim";
 import styles from "./CategoryFilter.module.css";
 
 const allCategories: VimCommandCategory[] = [
-  "motion", "edit", "search", "insert", "visual", "operator", "misc",
+  "motion",
+  "edit",
+  "search",
+  "insert",
+  "visual",
+  "operator",
+  "misc",
 ];
 
 interface CategoryFilterProps {
@@ -11,7 +17,10 @@ interface CategoryFilterProps {
   onToggle: (cat: VimCommandCategory) => void;
 }
 
-export function CategoryFilter({ selectedCategories, onToggle }: CategoryFilterProps) {
+export function CategoryFilter({
+  selectedCategories,
+  onToggle,
+}: CategoryFilterProps) {
   return (
     <div className={styles.container}>
       {allCategories.map((cat) => {
@@ -19,6 +28,7 @@ export function CategoryFilter({ selectedCategories, onToggle }: CategoryFilterP
         const color = categoryColors[cat];
         return (
           <button
+            type="button"
             key={cat}
             className={`${styles.button} ${isSelected ? styles.selected : ""}`}
             style={{

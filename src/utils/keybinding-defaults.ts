@@ -1,18 +1,18 @@
-import type { VimCommand } from "../types/vim";
+import { vimCommands } from "../data/vim-commands";
 import type {
   Keybinding,
   KeybindingConfig,
   VimMode,
 } from "../types/keybinding";
 import { emptyBindings } from "../types/keybinding";
-import { vimCommands } from "../data/vim-commands";
+import type { VimCommand } from "../types/vim";
 
 /**
  * VimCommand → Keybinding 変換
  */
 function commandToKeybinding(
   cmd: VimCommand,
-  source: Keybinding["source"] = "default"
+  source: Keybinding["source"] = "default",
 ): Keybinding {
   return {
     lhs: cmd.key,
@@ -29,9 +29,7 @@ function commandToKeybinding(
  * ハードコードされた vimCommands からデフォルトの KeybindingConfig を生成。
  * 各コマンドの modes フィールドに基づいて適切なモードに分配する。
  */
-export function createDefaultConfig(
-  name = "QWERTY Default"
-): KeybindingConfig {
+export function createDefaultConfig(name = "QWERTY Default"): KeybindingConfig {
   const bindings = emptyBindings();
 
   for (const cmd of vimCommands) {
@@ -57,7 +55,7 @@ export function createDefaultConfig(
 export function commandsToBindings(
   commands: VimCommand[],
   mode: VimMode,
-  source: Keybinding["source"] = "default"
+  source: Keybinding["source"] = "default",
 ): Keybinding[] {
   void mode; // 将来のモード別フィルタリング用
   return commands.map((cmd) => commandToKeybinding(cmd, source));

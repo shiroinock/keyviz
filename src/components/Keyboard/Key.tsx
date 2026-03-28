@@ -1,6 +1,6 @@
-import type { KeyData } from "../../types/keyboard";
-import type { VimCommand, HighlightState } from "../../types/vim";
 import { categoryColors } from "../../data/vim-commands";
+import type { KeyData } from "../../types/keyboard";
+import type { HighlightState, VimCommand } from "../../types/vim";
 import styles from "./Key.module.css";
 
 const KEY_SIZE = 54; // 1u = 54px
@@ -16,7 +16,15 @@ interface KeyProps {
   plain?: boolean;
 }
 
-export function Key({ keyData, qwertyLabel, customLabel, vimCommand, onHover, highlightState, plain }: KeyProps) {
+export function Key({
+  keyData,
+  qwertyLabel,
+  customLabel,
+  vimCommand,
+  onHover,
+  highlightState,
+  plain,
+}: KeyProps) {
   const { x, y, w, h, r, rx, ry, color: _color } = keyData;
 
   const showCategory = vimCommand && !plain;
@@ -46,18 +54,26 @@ export function Key({ keyData, qwertyLabel, customLabel, vimCommand, onHover, hi
   // 表示するラベル: カスタム配列 > QWERTY名 > 元のKLEラベル
   const displayLabel = customLabel ?? qwertyLabel ?? keyData.label;
 
-  const highlightClass = highlightState ? styles[`highlight_${highlightState}`] : "";
+  const highlightClass = highlightState
+    ? styles[`highlight_${highlightState}`]
+    : "";
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: キーボードキーは position:absolute レイアウトのため div が必要
     <div
+      role="button"
+      tabIndex={0}
       className={`${styles.key} ${highlightClass}`}
       style={style}
       onMouseEnter={() => onHover(vimCommand, customLabel)}
       onMouseLeave={() => onHover(null, null)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          onHover(vimCommand, customLabel);
+        }
+      }}
     >
-      <span className={styles.customLabel}>
-        {displayLabel}
-      </span>
+      <span className={styles.customLabel}>{displayLabel}</span>
       {showCategory && (
         <>
           <span className={styles.vimCommand}>{vimCommand.name}</span>

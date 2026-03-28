@@ -1,8 +1,8 @@
-import type { VimCommand } from "../types/vim";
-import type { KeybindingConfig, Keybinding } from "../types/keybinding";
-import { emptyBindings } from "../types/keybinding";
-import { vimCommands, decomposeVimKey } from "../data/vim-commands";
 import { invertKeymap } from "../data/keymap";
+import { decomposeVimKey, vimCommands } from "../data/vim-commands";
+import type { Keybinding, KeybindingConfig } from "../types/keybinding";
+import { emptyBindings } from "../types/keybinding";
+import type { VimCommand } from "../types/vim";
 
 /**
  * カスタム配列から KeybindingConfig を生成する。
@@ -18,7 +18,7 @@ import { invertKeymap } from "../data/keymap";
 export function deriveFromLayout(
   customKeymap: Record<string, string>,
   commands: VimCommand[] = vimCommands,
-  name = "Layout Derived"
+  name = "Layout Derived",
 ): KeybindingConfig {
   const inverse = invertKeymap(customKeymap);
   const bindings = emptyBindings();

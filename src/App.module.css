@@ -80,7 +80,9 @@
   cursor: pointer;
   color: #6c7086;
   background: transparent;
-  transition: background-color 0.15s, color 0.15s;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
 }
 
 .modeTab:hover {

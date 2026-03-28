@@ -1,4 +1,4 @@
-import type { NvimMapping, NvimMapMode, NvimMapSource } from "../types/vim";
+import type { NvimMapMode, NvimMapping, NvimMapSource } from "../types/vim";
 
 /**
  * `nvim --headless` の `verbose map` 出力をパースする
@@ -18,7 +18,7 @@ export function parseNvimMapOutput(raw: string): NvimMapping[] {
 
     // マッピング行: 先頭がモード文字 + スペース (or スペース2つ = 全モード)
     const mapMatch = line.match(
-      /^([nxovsic!] | {2})(.+?)(\s+\*\s+|\s{2,})(.+)$/
+      /^([nxovsic!] | {2})(.+?)(\s+\*\s+|\s{2,})(.+)$/,
     );
     if (!mapMatch) {
       i++;
@@ -34,7 +34,11 @@ export function parseNvimMapOutput(raw: string): NvimMapping[] {
     if (lhs.startsWith("<Plug>")) {
       i++;
       // 後続の description/source 行をスキップ
-      while (i < lines.length && (lines[i].startsWith(" ") || lines[i].startsWith("\t"))) i++;
+      while (
+        i < lines.length &&
+        (lines[i].startsWith(" ") || lines[i].startsWith("\t"))
+      )
+        i++;
       continue;
     }
 
@@ -43,7 +47,11 @@ export function parseNvimMapOutput(raw: string): NvimMapping[] {
     let sourceDetail = "";
 
     // 次行: description (先頭がスペース、タブでない)
-    if (i + 1 < lines.length && lines[i + 1].match(/^ {2,}/) && !lines[i + 1].startsWith("\t")) {
+    if (
+      i + 1 < lines.length &&
+      lines[i + 1].match(/^ {2,}/) &&
+      !lines[i + 1].startsWith("\t")
+    ) {
       i++;
       description = lines[i].trim();
       // :help で始まるものはそのまま使う

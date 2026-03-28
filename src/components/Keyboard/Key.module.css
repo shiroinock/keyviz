@@ -8,7 +8,9 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.1s;
+  transition:
+    transform 0.1s,
+    box-shadow 0.1s;
   font-family: "Inter", "SF Mono", monospace;
   overflow: hidden;
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
@@ -67,11 +69,21 @@
 }
 
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 8px 2px #4fc3f7; }
-  50% { box-shadow: 0 0 16px 6px #4fc3f7; }
+  0%,
+  100% {
+    box-shadow: 0 0 8px 2px #4fc3f7;
+  }
+  50% {
+    box-shadow: 0 0 16px 6px #4fc3f7;
+  }
 }
 
 @keyframes pulse_mod {
-  0%, 100% { box-shadow: 0 0 8px 2px #fab387; }
-  50% { box-shadow: 0 0 16px 6px #fab387; }
+  0%,
+  100% {
+    box-shadow: 0 0 8px 2px #fab387;
+  }
+  50% {
+    box-shadow: 0 0 16px 6px #fab387;
+  }
 }

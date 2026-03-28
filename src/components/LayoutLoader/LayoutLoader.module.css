@@ -25,7 +25,9 @@
   color: #6c7086;
   font-size: 13px;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
   text-align: center;
 }
 

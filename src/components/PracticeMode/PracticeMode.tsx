@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
-import type { HighlightEntry, VIAKeymapFull } from "../../types/vim";
+import { useCallback, useEffect, useState } from "react";
 import { usePractice } from "../../hooks/usePractice";
+import type { HighlightEntry, VIAKeymapFull } from "../../types/vim";
 import { CategoryFilter } from "./CategoryFilter";
-import { PracticePrompt } from "./PracticePrompt";
 import styles from "./PracticeMode.module.css";
+import { PracticePrompt } from "./PracticePrompt";
 
 interface PracticeModeProps {
   customKeymap: Record<string, string>;
@@ -11,7 +11,11 @@ interface PracticeModeProps {
   onHighlightKeys: (keys: HighlightEntry[]) => void;
 }
 
-export function PracticeMode({ customKeymap, viaKeymapFull, onHighlightKeys }: PracticeModeProps) {
+export function PracticeMode({
+  customKeymap,
+  viaKeymapFull,
+  onHighlightKeys,
+}: PracticeModeProps) {
   const {
     currentCommand,
     currentInputSpec,
@@ -33,11 +37,12 @@ export function PracticeMode({ customKeymap, viaKeymapFull, onHighlightKeys }: P
   }, [startPractice]);
 
   // カテゴリ変更時に練習中なら出題を更新
+  // biome-ignore lint/correctness/useExhaustiveDependencies: selectedCategories の変更時のみ発火させたい
   useEffect(() => {
     if (started && eligibleCommands.length > 0) {
       pickNext(currentCommand);
     }
-  }, [selectedCategories]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedCategories]);
 
   // 押すべきキー全てをハイライト
   const buildHighlightEntries = useCallback(
@@ -60,7 +65,7 @@ export function PracticeMode({ customKeymap, viaKeymapFull, onHighlightKeys }: P
       }
       return entries;
     },
-    [currentInputSpec]
+    [currentInputSpec],
   );
 
   // 現在の出題キーをハイライト
@@ -70,7 +75,14 @@ export function PracticeMode({ customKeymap, viaKeymapFull, onHighlightKeys }: P
     } else if (!currentCommand || !started) {
       onHighlightKeys([]);
     }
-  }, [currentCommand, currentInputSpec, started, lastResult, onHighlightKeys, buildHighlightEntries]);
+  }, [
+    currentCommand,
+    currentInputSpec,
+    started,
+    lastResult,
+    onHighlightKeys,
+    buildHighlightEntries,
+  ]);
 
   // キー入力ハンドラ
   useEffect(() => {
@@ -78,7 +90,18 @@ export function PracticeMode({ customKeymap, viaKeymapFull, onHighlightKeys }: P
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // 修飾キー単体は無視
-      if (["Shift", "Control", "Alt", "Meta", "CapsLock", "Tab", "Escape"].includes(e.key)) return;
+      if (
+        [
+          "Shift",
+          "Control",
+          "Alt",
+          "Meta",
+          "CapsLock",
+          "Tab",
+          "Escape",
+        ].includes(e.key)
+      )
+        return;
 
       e.preventDefault();
 
@@ -99,7 +122,14 @@ export function PracticeMode({ customKeymap, viaKeymapFull, onHighlightKeys }: P
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [started, currentCommand, checkAnswer, pickNext, onHighlightKeys, buildHighlightEntries]);
+  }, [
+    started,
+    currentCommand,
+    checkAnswer,
+    pickNext,
+    onHighlightKeys,
+    buildHighlightEntries,
+  ]);
 
   return (
     <div className={styles.container}>

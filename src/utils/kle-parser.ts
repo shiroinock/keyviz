@@ -1,4 +1,9 @@
-import type { KLEJSON, KLEKeyProperties, KeyData, KeyboardLayout } from "../types/keyboard";
+import type {
+  KeyboardLayout,
+  KeyData,
+  KLEJSON,
+  KLEKeyProperties,
+} from "../types/keyboard";
 
 /**
  * KLE ラベルからレイアウトオプション情報を抽出する
@@ -34,7 +39,10 @@ function parseKLELabel(raw: string): {
 /**
  * KLE JSON をパースして内部レイアウトデータに変換する
  */
-export function parseKLE(kle: KLEJSON, name: string = "Keyboard"): KeyboardLayout {
+export function parseKLE(
+  kle: KLEJSON,
+  name: string = "Keyboard",
+): KeyboardLayout {
   const keys: KeyData[] = [];
 
   let currentX = 0;
@@ -84,7 +92,11 @@ export function parseKLE(kle: KLEJSON, name: string = "Keyboard"): KeyboardLayou
         const props = item as KLEKeyProperties;
 
         // 回転の処理
-        if (props.r !== undefined || props.rx !== undefined || props.ry !== undefined) {
+        if (
+          props.r !== undefined ||
+          props.rx !== undefined ||
+          props.ry !== undefined
+        ) {
           if (props.rx !== undefined) currentRX = props.rx;
           if (props.ry !== undefined) currentRY = props.ry;
           if (props.r !== undefined) currentR = props.r;
@@ -120,16 +132,21 @@ export function parseVIAorKLE(json: unknown): KeyboardLayout {
   if (Array.isArray(json)) {
     return parseKLE(json as KLEJSON);
   }
-  throw new Error("Unsupported JSON format: expected VIA definition or KLE array");
+  throw new Error(
+    "Unsupported JSON format: expected VIA definition or KLE array",
+  );
 }
 
-function isVIADefinition(json: unknown): json is { name: string; layouts: { keymap: KLEJSON } } {
+function isVIADefinition(
+  json: unknown,
+): json is { name: string; layouts: { keymap: KLEJSON } } {
   return (
     typeof json === "object" &&
     json !== null &&
     "layouts" in json &&
     typeof (json as Record<string, unknown>).layouts === "object" &&
     (json as Record<string, unknown>).layouts !== null &&
-    "keymap" in ((json as Record<string, unknown>).layouts as Record<string, unknown>)
+    "keymap" in
+      ((json as Record<string, unknown>).layouts as Record<string, unknown>)
   );
 }

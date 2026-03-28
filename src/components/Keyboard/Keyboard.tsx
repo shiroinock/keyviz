@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import type { KeyboardLayout } from "../../types/keyboard";
-import type { VimCommand, HighlightEntry } from "../../types/vim";
-import type { VimMode } from "../../types/keybinding";
-import { invertKeymap } from "../../data/keymap";
 import { useKeybindingContext } from "../../context/KeybindingContext";
+import { invertKeymap } from "../../data/keymap";
+import type { VimMode } from "../../types/keybinding";
+import type { KeyboardLayout } from "../../types/keyboard";
+import type { HighlightEntry, VimCommand } from "../../types/vim";
 import { Key } from "./Key";
 import styles from "./Keyboard.module.css";
 
@@ -14,11 +14,42 @@ const GAP = 2;
  * KLE ラベル → QWERTY キー名 のマッピング（文字ラベル用）
  */
 const labelToQwerty: Record<string, string> = {
-  Q: "q", W: "w", E: "e", R: "r", T: "t", Y: "y", U: "u", I: "i", O: "o", P: "p",
-  A: "a", S: "s", D: "d", F: "f", G: "g", H: "h", J: "j", K: "k", L: "l",
-  Z: "z", X: "x", C: "c", V: "v", B: "b", N: "n", M: "m",
-  ";": ";", "'": "'", ",": ",", ".": ".", "/": "/",
-  "-": "-", "=": "=", "[": "[", "]": "]", "\\": "\\",
+  Q: "q",
+  W: "w",
+  E: "e",
+  R: "r",
+  T: "t",
+  Y: "y",
+  U: "u",
+  I: "i",
+  O: "o",
+  P: "p",
+  A: "a",
+  S: "s",
+  D: "d",
+  F: "f",
+  G: "g",
+  H: "h",
+  J: "j",
+  K: "k",
+  L: "l",
+  Z: "z",
+  X: "x",
+  C: "c",
+  V: "v",
+  B: "b",
+  N: "n",
+  M: "m",
+  ";": ";",
+  "'": "'",
+  ",": ",",
+  ".": ".",
+  "/": "/",
+  "-": "-",
+  "=": "=",
+  "[": "[",
+  "]": "]",
+  "\\": "\\",
   "`": "`",
 };
 
@@ -32,7 +63,15 @@ interface KeyboardProps {
   activeVimMode?: VimMode;
 }
 
-export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highlightKeys, plain, activeVimMode = "n" }: KeyboardProps) {
+export function Keyboard({
+  layout,
+  customKeymap,
+  matrixKeymap,
+  onHover,
+  highlightKeys,
+  plain,
+  activeVimMode = "n",
+}: KeyboardProps) {
   // カスタム配列の逆引き: 出力文字 → QWERTY位置
   const inverseCustom = invertKeymap(customKeymap);
 
@@ -40,7 +79,7 @@ export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highligh
   const { bindingsByLhs } = useKeybindingContext();
   const modeBindings = useMemo(
     () => bindingsByLhs[activeVimMode],
-    [bindingsByLhs, activeVimMode]
+    [bindingsByLhs, activeVimMode],
   );
 
   // キーボード全体のバウンディングボックスを計算
@@ -83,7 +122,7 @@ export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highligh
 
   return (
     <div className={styles.container} style={{ width, height }}>
-      {layout.keys.map((keyData, i) => {
+      {layout.keys.map((keyData) => {
         let displayLabel: string | null = null;
         let vimCommand: VimCommand | null = null;
 
@@ -99,7 +138,12 @@ export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highligh
             const qwertyPos = inverseCustom[outputChar] ?? outputChar;
             const binding = modeBindings.get(qwertyPos);
             vimCommand = binding
-              ? { key: binding.lhs, name: binding.name, description: binding.description, category: binding.category }
+              ? {
+                  key: binding.lhs,
+                  name: binding.name,
+                  description: binding.description,
+                  category: binding.category,
+                }
               : null;
           } else if (outputChar) {
             // space, tab, enter 等の特殊キー
@@ -112,7 +156,12 @@ export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highligh
             displayLabel = customKeymap[qwertyKey] ?? qwertyKey;
             const binding = modeBindings.get(qwertyKey);
             vimCommand = binding
-              ? { key: binding.lhs, name: binding.name, description: binding.description, category: binding.category }
+              ? {
+                  key: binding.lhs,
+                  name: binding.name,
+                  description: binding.description,
+                  category: binding.category,
+                }
               : null;
           }
         }
@@ -135,14 +184,14 @@ export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highligh
         } else {
           keyQwertyPos = labelToQwerty[keyData.label] ?? null;
         }
-        const matchedHighlight = highlightKeys?.find((h) =>
-          h.qwertyKey === keyQwertyPos || h.qwertyKey === keyData.label
+        const matchedHighlight = highlightKeys?.find(
+          (h) => h.qwertyKey === keyQwertyPos || h.qwertyKey === keyData.label,
         );
         const keyHighlight = matchedHighlight?.state ?? null;
 
         return (
           <Key
-            key={i}
+            key={`${keyData.label}-${keyData.x}-${keyData.y}`}
             keyData={offsetKeyData}
             qwertyLabel={displayLabel}
             customLabel={displayLabel}

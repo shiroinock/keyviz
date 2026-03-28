@@ -20,6 +20,7 @@ export function ModeSelector({ activeMode, onModeChange }: Props) {
       <div className={styles.tabs}>
         {vimModes.map(({ mode, label, short }) => (
           <button
+            type="button"
             key={mode}
             className={`${styles.tab} ${activeMode === mode ? styles.tabActive : ""}`}
             onClick={() => onModeChange(mode)}

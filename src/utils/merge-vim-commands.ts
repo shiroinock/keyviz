@@ -1,4 +1,4 @@
-import type { VimCommand, NvimMapping, MergedVimCommand } from "../types/vim";
+import type { MergedVimCommand, NvimMapping, VimCommand } from "../types/vim";
 
 /**
  * ハードコードの Vim コマンドと nvim の実マッピングをマージする
@@ -23,7 +23,7 @@ export function mergeWithNvimMaps(
 
   // nvim マップから normal mode のみ取り込む
   const normalMaps = nvimMaps.filter(
-    (m) => m.mode === "n" && !m.lhs.startsWith("<Plug>")
+    (m) => m.mode === "n" && !m.lhs.startsWith("<Plug>"),
   );
 
   for (const nvMap of normalMaps) {
@@ -60,7 +60,10 @@ export function mergeWithNvimMaps(
  */
 function normalizeNvimKey(lhs: string): string {
   // <C-X> → <C-x> に統一
-  return lhs.replace(/<C-(\w)>/gi, (_, ch: string) => `<C-${ch.toLowerCase()}>`);
+  return lhs.replace(
+    /<C-(\w)>/gi,
+    (_, ch: string) => `<C-${ch.toLowerCase()}>`,
+  );
 }
 
 /**

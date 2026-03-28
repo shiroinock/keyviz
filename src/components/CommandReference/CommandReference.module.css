@@ -24,7 +24,9 @@
   color: #6c7086;
   font-size: 12px;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .catButton:hover {
@@ -159,7 +161,9 @@
   color: #6c7086;
   font-size: 12px;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .srcButton:hover {
