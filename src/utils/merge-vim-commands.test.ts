@@ -83,7 +83,11 @@ describe("mergeWithNvimMaps", () => {
       },
     ];
     const nvimMaps = [
-      makeNvimMap({ lhs: "<C-F>", source: "nvim-default", description: "scroll" }),
+      makeNvimMap({
+        lhs: "<C-F>",
+        source: "nvim-default",
+        description: "scroll",
+      }),
     ];
     const result = mergeWithNvimMaps(commands, nvimMaps);
 
