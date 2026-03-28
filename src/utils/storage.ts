@@ -1,22 +1,18 @@
-// localStorage のキープレフィックスと各キー定数
 const STORAGE_PREFIX = "keyviz:";
 const LAYOUT_KEY = `${STORAGE_PREFIX}layout`;
 const KEYMAP_KEY = `${STORAGE_PREFIX}keymap`;
 
-// Layout の保存データ型
 type StoredLayout = {
   json: string;
   name: string;
 };
 
-// Keymap の保存データ型
 type StoredKeymap = {
   json: string;
   matrixCols: number;
   name: string;
 };
 
-// 型ガード: StoredLayout かどうかを検証する
 function isStoredLayout(value: unknown): value is StoredLayout {
   return (
     typeof value === "object" &&
@@ -28,7 +24,6 @@ function isStoredLayout(value: unknown): value is StoredLayout {
   );
 }
 
-// 型ガード: StoredKeymap かどうかを検証する
 function isStoredKeymap(value: unknown): value is StoredKeymap {
   return (
     typeof value === "object" &&
@@ -42,7 +37,6 @@ function isStoredKeymap(value: unknown): value is StoredKeymap {
   );
 }
 
-// JSON.parse を安全に実行し、パース失敗時は null を返す
 function safeJsonParse(raw: string): unknown {
   try {
     return JSON.parse(raw);

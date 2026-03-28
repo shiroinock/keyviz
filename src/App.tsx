@@ -47,7 +47,7 @@ export function App() {
   const [activeVimMode, setActiveVimMode] = useState<VimMode>("n");
   const [highlightKeys, setHighlightKeys] = useState<HighlightEntry[]>([]);
   const [keymapFileName, setKeymapFileName] = useState<string | null>(null);
-  const [matrixCols, setMatrixCols] = useState(DEFAULT_MATRIX_COLS); // Corne v4 default
+  const [matrixCols, setMatrixCols] = useState(DEFAULT_MATRIX_COLS);
   const {
     nvimMaps,
     loading: nvimLoading,
@@ -55,7 +55,6 @@ export function App() {
     refresh: refreshNvim,
   } = useNvimMaps();
 
-  // localStorage からキーマップを復元
   useEffect(() => {
     const stored = loadKeymap();
     if (stored) {
@@ -95,7 +94,6 @@ export function App() {
         if (parsed.matrix?.cols) {
           setMatrixCols(parsed.matrix.cols);
         }
-        // レイアウトを localStorage に保存
         saveLayout(jsonString, parsed.name || "Unknown");
       } catch {
         // ignore
@@ -113,7 +111,6 @@ export function App() {
         const full = parseVIAKeymapFull(parsed, matrixCols);
         setViaKeymapFull(full);
         setKeymapFileName(KEYMAP_LOADED_LABEL);
-        // キーマップを localStorage に保存
         saveKeymap(jsonString, matrixCols, KEYMAP_LOADED_LABEL);
       } catch (e) {
         setKeymapFileName(

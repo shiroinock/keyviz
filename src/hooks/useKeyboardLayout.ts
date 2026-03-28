@@ -6,12 +6,10 @@ import { loadLayout } from "../utils/storage";
 
 const PARSE_ERROR_MESSAGE = "JSON の解析に失敗しました";
 
-// デフォルトレイアウトを生成するヘルパー
 function buildDefaultLayout(): KeyboardLayout {
   return parseKLE(defaultLayoutJSON.layouts.keymap, defaultLayoutJSON.name);
 }
 
-// localStorage から保存済みレイアウトを復元する。失敗時は null を返す
 function restoreLayoutFromStorage(): KeyboardLayout | null {
   const stored = loadLayout();
   if (stored === null) return null;
