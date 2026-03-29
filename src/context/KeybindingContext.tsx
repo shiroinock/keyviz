@@ -5,6 +5,7 @@ import type {
   KeybindingConfig,
   VimMode,
 } from "../types/keybinding";
+import { loadKeybindingConfig } from "../utils/storage";
 
 interface KeybindingContextValue {
   config: KeybindingConfig;
@@ -22,7 +23,9 @@ export function KeybindingProvider({
   children: React.ReactNode;
   initial?: KeybindingConfig;
 }) {
-  const value = useKeybindingConfig(initial);
+  // initial が指定されていない場合、localStorage から復元を試みる
+  const resolvedInitial = initial ?? loadKeybindingConfig() ?? undefined;
+  const value = useKeybindingConfig(resolvedInitial);
   return (
     <KeybindingContext.Provider value={value}>
       {children}
