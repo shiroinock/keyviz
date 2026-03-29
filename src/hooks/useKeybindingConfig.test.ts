@@ -5,6 +5,7 @@ vi.mock("../utils/storage", () => ({
   saveKeybindingConfig: vi.fn(),
 }));
 
+import type { NvimMapping } from "../types/vim";
 import { saveKeybindingConfig } from "../utils/storage";
 import { useKeybindingConfig } from "./useKeybindingConfig";
 
@@ -132,6 +133,109 @@ describe("useKeybindingConfig — localStorage 永続化", () => {
       );
       expect(hasAa).toBe(true);
       expect(hasBb).toBe(true);
+    });
+  });
+});
+
+// ── テストヘルパー ──
+
+function makeNvimMap(overrides: Partial<NvimMapping> = {}): NvimMapping {
+  return {
+    mode: "n",
+    lhs: "j",
+    rhs: "j",
+    noremap: true,
+    description: "",
+    source: "user",
+    sourceDetail: "",
+    ...overrides,
+  };
+}
+
+describe("useKeybindingConfig — IMPORT_NVIM", () => {
+  describe("state.bindings の更新", () => {
+    it("IMPORT_NVIM dispatch 後に state.bindings が空でなくなる", () => {
+      const { result } = renderHook(() => useKeybindingConfig());
+      const maps: NvimMapping[] = [
+        makeNvimMap({ mode: "n", lhs: "j", description: "下に移動" }),
+      ];
+
+      act(() => {
+        result.current.dispatch({ type: "IMPORT_NVIM", maps });
+      });
+
+      const totalBindings = Object.values(
+        result.current.config.bindings,
+      ).reduce((sum, arr) => sum + arr.length, 0);
+      expect(totalBindings).toBeGreaterThan(0);
+    });
+
+    it("ノーマルモードのマップが state.bindings.n に反映される", () => {
+      const { result } = renderHook(() => useKeybindingConfig());
+      const maps: NvimMapping[] = [
+        makeNvimMap({ mode: "n", lhs: "j", description: "下に移動" }),
+      ];
+
+      act(() => {
+        result.current.dispatch({ type: "IMPORT_NVIM", maps });
+      });
+
+      const nBindings = result.current.config.bindings.n;
+      const found = nBindings.find((b) => b.lhs === "j");
+      expect(found).toBeDefined();
+    });
+
+    it("v モードのマップが state.bindings.v、x、s にそれぞれ反映される", () => {
+      const { result } = renderHook(() => useKeybindingConfig());
+      const maps: NvimMapping[] = [
+        makeNvimMap({ mode: "v", lhs: "gq", description: "ビジュアル整形" }),
+      ];
+
+      act(() => {
+        result.current.dispatch({ type: "IMPORT_NVIM", maps });
+      });
+
+      const bindings = result.current.config.bindings;
+      expect(bindings.v.find((b) => b.lhs === "gq")).toBeDefined();
+      expect(bindings.x.find((b) => b.lhs === "gq")).toBeDefined();
+      expect(bindings.s.find((b) => b.lhs === "gq")).toBeDefined();
+    });
+  });
+
+  describe("永続化", () => {
+    it("IMPORT_NVIM dispatch 後に saveKeybindingConfig が呼ばれる", () => {
+      const { result } = renderHook(() => useKeybindingConfig());
+      const maps: NvimMapping[] = [
+        makeNvimMap({ mode: "n", lhs: "k", description: "上に移動" }),
+      ];
+
+      act(() => {
+        result.current.dispatch({ type: "IMPORT_NVIM", maps });
+      });
+
+      expect(mockSaveKeybindingConfig).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("updatedAt の更新", () => {
+    it("IMPORT_NVIM dispatch 後に updatedAt が更新される", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
+
+      const { result } = renderHook(() => useKeybindingConfig());
+      const before = result.current.config.updatedAt;
+
+      vi.setSystemTime(new Date("2026-01-01T00:00:01.000Z"));
+      const maps: NvimMapping[] = [
+        makeNvimMap({ mode: "n", lhs: "l", description: "右に移動" }),
+      ];
+
+      act(() => {
+        result.current.dispatch({ type: "IMPORT_NVIM", maps });
+      });
+
+      expect(result.current.config.updatedAt).not.toBe(before);
+      vi.useRealTimers();
     });
   });
 });

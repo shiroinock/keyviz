@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import { vimCommands } from "../data/vim-commands";
 import type {
   Keybinding,
   KeybindingConfig,
   VimMode,
 } from "../types/keybinding";
 import type { NvimMapping } from "../types/vim";
+import { convertNvimMapsToKeybindings } from "../utils/convert-nvim-to-keybinding";
 import { createDefaultConfig } from "../utils/keybinding-defaults";
 import { saveKeybindingConfig } from "../utils/storage";
 
@@ -93,8 +95,12 @@ function keybindingReducer(
     }
 
     case "IMPORT_NVIM": {
-      // Phase 4 で実装
-      return state;
+      const imported = convertNvimMapsToKeybindings(action.maps, vimCommands);
+      return {
+        ...state,
+        bindings: imported,
+        updatedAt: now,
+      };
     }
 
     case "RESET_TO_DEFAULTS":
