@@ -43,7 +43,6 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
         class="_groupHeader_5cd256"
       >
         <td
-          class="_groupHeaderCell_5cd256"
           colspan="3"
         >
           Top
@@ -325,7 +324,6 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
         class="_groupHeader_5cd256"
       >
         <td
-          class="_groupHeaderCell_5cd256"
           colspan="3"
         >
           Home
@@ -607,7 +605,6 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
         class="_groupHeader_5cd256"
       >
         <td
-          class="_groupHeaderCell_5cd256"
           colspan="3"
         >
           Bottom

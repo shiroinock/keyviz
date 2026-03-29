@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import { defaultCustomKeymap } from "../data/keymap";
 import { vimCommands } from "../data/vim-commands";
 import type {
   Keybinding,
@@ -99,7 +100,7 @@ function keybindingReducer(
       return {
         ...state,
         customKeymap: {
-          ...state.customKeymap,
+          ...(state.customKeymap ?? defaultCustomKeymap),
           [action.qwertyKey]: action.outputChar,
         },
         updatedAt: now,

@@ -54,10 +54,6 @@
   border-bottom: 1px solid #313244;
 }
 
-.groupHeaderCell {
-  /* colSpan=3 で全列にまたがる */
-}
-
 .row {
   transition: background-color 0.1s;
 }

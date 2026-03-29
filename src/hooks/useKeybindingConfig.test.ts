@@ -367,4 +367,26 @@ describe("useKeybindingConfig — UPDATE_KEYMAP_ENTRY", () => {
       vi.useRealTimers();
     });
   });
+
+  describe("customKeymap 未設定時のフォールバック", () => {
+    it("customKeymap が undefined のまま UPDATE_KEYMAP_ENTRY を dispatch すると defaultCustomKeymap をベースにする", () => {
+      const { result } = renderHook(() => useKeybindingConfig());
+
+      expect(result.current.config.customKeymap).toBeUndefined();
+
+      act(() => {
+        result.current.dispatch({
+          type: "UPDATE_KEYMAP_ENTRY",
+          qwertyKey: "q",
+          outputChar: "z",
+        });
+      });
+
+      expect(result.current.config.customKeymap?.q).toBe("z");
+      expect(result.current.config.customKeymap?.w).toBeDefined();
+      expect(Object.keys(result.current.config.customKeymap ?? {}).length).toBe(
+        30,
+      );
+    });
+  });
 });

@@ -42,6 +42,8 @@ export function KeymapEditor() {
   const [editingValue, setEditingValue] = useState<string>("");
   // インライン input にフォーカスを当てるための ref
   const inputRef = useRef<HTMLInputElement>(null);
+  // Escape キ���ンセル時に onBlur の dispatch ���防止するフラグ
+  const isCancellingRef = useRef(false);
 
   // 編集モードに入ったときに input にフォーカス
   useEffect(() => {
@@ -51,11 +53,17 @@ export function KeymapEditor() {
   }, [editingKey]);
 
   const handleCellClick = (qwertyKey: string) => {
+    isCancellingRef.current = false;
     setEditingKey(qwertyKey);
     setEditingValue(keymap[qwertyKey] ?? "");
   };
 
   const handleConfirm = (qwertyKey: string) => {
+    if (isCancellingRef.current) return;
+    if (editingValue.trim() === "") {
+      setEditingKey(null);
+      return;
+    }
     dispatch({
       type: "UPDATE_KEYMAP_ENTRY",
       qwertyKey,
@@ -65,6 +73,7 @@ export function KeymapEditor() {
   };
 
   const handleCancel = () => {
+    isCancellingRef.current = true;
     setEditingKey(null);
   };
 
@@ -98,9 +107,7 @@ export function KeymapEditor() {
           <tbody key={label}>
             {/* 行グループのヘッダー行 */}
             <tr className={styles.groupHeader}>
-              <td colSpan={3} className={styles.groupHeaderCell}>
-                {label}
-              </td>
+              <td colSpan={3}>{label}</td>
             </tr>
 
             {keys.map((qwertyKey) => {
