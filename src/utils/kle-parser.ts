@@ -148,7 +148,11 @@ export function isVIADefinition(json: unknown): json is VIADefinition {
     typeof (json as Record<string, unknown>).layouts === "object" &&
     (json as Record<string, unknown>).layouts !== null &&
     "keymap" in
+      ((json as Record<string, unknown>).layouts as Record<string, unknown>) &&
+    isKLEJSON(
       ((json as Record<string, unknown>).layouts as Record<string, unknown>)
+        .keymap,
+    )
   );
 }
 
