@@ -30,7 +30,7 @@ jobs:
             query($owner: String!, $repo: String!, $number: Int!) {
               repository(owner: $owner, name: $repo) {
                 issue(number: $number) {
-                  trackedInIssues(first: 10) {
+                  trackedInIssues(first: 25) {
                     nodes {
                       number
                       state
@@ -95,14 +95,15 @@ jobs:
             NODE_COUNT=$(echo "$SUBISSUES" | jq '.data.repository.issue.subIssues.nodes | length')
             CLOSED_COUNT=$(echo "$SUBISSUES" | jq '[.data.repository.issue.subIssues.nodes[] | select(.state == "CLOSED")] | length')
 
-            if [ "$NODE_COUNT" -lt "$TOTAL" ]; then
-              echo "::warning::Epic #${parent_number} has ${TOTAL} sub-issues but only ${NODE_COUNT} were fetched. Result may be incomplete."
-            fi
-
-            echo "Epic #${parent_number}: total=${TOTAL}, closed=${CLOSED_COUNT}"
+            echo "Epic #${parent_number}: total=${TOTAL}, fetched=${NODE_COUNT}, closed=${CLOSED_COUNT}"
 
             if [ "$TOTAL" -eq 0 ]; then
               echo "Epic #${parent_number} has no sub-issues, skipping."
+              continue
+            fi
+
+            if [ "$NODE_COUNT" -lt "$TOTAL" ]; then
+              echo "::warning::Epic #${parent_number} has ${TOTAL} sub-issues but only ${NODE_COUNT} were fetched. Skipping to avoid incomplete judgment."
               continue
             fi
 
