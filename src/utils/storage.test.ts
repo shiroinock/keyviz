@@ -242,6 +242,7 @@ describe("loadKeybindingConfig", () => {
 
     const result = loadKeybindingConfig();
 
+    expect(result).not.toBeNull();
     expect(result!.customKeymap).toEqual({ a: "a", s: "r" });
   });
 
@@ -804,6 +805,7 @@ describe("saveKeybindingConfig の version 保持", () => {
 
     const result = loadKeybindingConfig();
 
+    expect(result).not.toBeNull();
     expect(result!.version).toBe(1);
   });
 });
