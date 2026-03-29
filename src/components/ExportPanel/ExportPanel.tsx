@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useKeybindingContext } from "../../context/KeybindingContext";
 import {
   keybindingToJSON,
@@ -37,11 +37,15 @@ export function ExportPanel() {
     (bs) => bs.length > 0,
   );
 
-  const content = hasBindings
-    ? activeFormat === "lua"
-      ? keybindingToLua(config)
-      : keybindingToJSON(config)
-    : "";
+  const content = useMemo(
+    () =>
+      hasBindings
+        ? activeFormat === "lua"
+          ? keybindingToLua(config)
+          : keybindingToJSON(config)
+        : "",
+    [hasBindings, activeFormat, config],
+  );
 
   const resetCopyStatus = useCallback(() => {
     clearTimeout(copyTimerRef.current);
@@ -93,7 +97,11 @@ export function ExportPanel() {
               key={fmt}
               type="button"
               className={`${styles.tab} ${activeFormat === fmt ? styles.tabActive : ""}`}
-              onClick={() => setActiveFormat(fmt)}
+              onClick={() => {
+                setActiveFormat(fmt);
+                setCopyStatus("idle");
+                clearTimeout(copyTimerRef.current);
+              }}
             >
               {FORMAT_LABELS[fmt]}
             </button>
