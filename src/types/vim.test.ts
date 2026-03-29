@@ -1,6 +1,10 @@
-import { describe, expect, it } from "vitest";
-import type { NvimMapMode, VimMode } from "./vim";
-import { expandNvimMapMode, matchesVimMode } from "./vim";
+import { describe, expect, it, test } from "vitest";
+import type { NvimMapMode, VimCommandCategory, VimMode } from "./vim";
+import {
+  expandNvimMapMode,
+  matchesVimMode,
+  VIM_COMMAND_CATEGORIES,
+} from "./vim";
 
 describe("expandNvimMapMode", () => {
   describe("単一モードの展開", () => {
@@ -139,5 +143,33 @@ describe("matchesVimMode", () => {
         expect(result).toBe(false);
       }
     });
+  });
+});
+
+describe("VIM_COMMAND_CATEGORIES", () => {
+  test("8つの要素を持つ", () => {
+    expect(VIM_COMMAND_CATEGORIES).toHaveLength(8);
+  });
+
+  describe("全ての VimCommandCategory 値を含む", () => {
+    const cases: VimCommandCategory[] = [
+      "motion",
+      "edit",
+      "search",
+      "insert",
+      "visual",
+      "operator",
+      "textobj",
+      "misc",
+    ];
+
+    test.each(cases)('"%s" を含む', (category) => {
+      expect(VIM_COMMAND_CATEGORIES).toContain(category);
+    });
+  });
+
+  test("重複がない", () => {
+    const unique = new Set<string>(VIM_COMMAND_CATEGORIES);
+    expect(unique.size).toBe(VIM_COMMAND_CATEGORIES.length);
   });
 });

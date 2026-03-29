@@ -12,6 +12,18 @@ export type VimCommandCategory =
   | "textobj"
   | "misc";
 
+/** VimCommandCategory の全値リスト */
+export const VIM_COMMAND_CATEGORIES = [
+  "motion",
+  "edit",
+  "search",
+  "insert",
+  "visual",
+  "operator",
+  "textobj",
+  "misc",
+] as const satisfies VimCommandCategory[];
+
 // ── Neovim map 連携 ──
 
 export type NvimMapMode = "n" | "x" | "o" | "v" | "s" | "!" | "";

@@ -41,6 +41,14 @@ export type KeybindingSource =
   | "nvim-import"
   | "user-edit";
 
+/** KeybindingSource の全値リスト */
+export const KEYBINDING_SOURCES = [
+  "default",
+  "layout-derived",
+  "nvim-import",
+  "user-edit",
+] as const satisfies KeybindingSource[];
+
 /** 個別のキーバインディング */
 export interface Keybinding {
   /** キーシーケンス ("j", "dd", "<C-f>", "<leader>ff") */

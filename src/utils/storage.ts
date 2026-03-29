@@ -1,4 +1,10 @@
-import { type KeybindingConfig, VIM_MODES } from "../types/keybinding";
+import {
+  KEYBINDING_SOURCES,
+  type KeybindingConfig,
+  type KeybindingSource,
+  VIM_MODES,
+} from "../types/keybinding";
+import { VIM_COMMAND_CATEGORIES, type VimCommandCategory } from "../types/vim";
 
 const STORAGE_PREFIX = "keyviz:";
 
@@ -110,8 +116,8 @@ function isValidBindingElement(element: unknown): boolean {
     typeof e.lhs === "string" &&
     typeof e.name === "string" &&
     typeof e.description === "string" &&
-    typeof e.category === "string" &&
-    typeof e.source === "string" &&
+    VIM_COMMAND_CATEGORIES.includes(e.category as VimCommandCategory) &&
+    KEYBINDING_SOURCES.includes(e.source as KeybindingSource) &&
     typeof e.noremap === "boolean"
   );
 }
