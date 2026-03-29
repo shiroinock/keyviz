@@ -242,7 +242,8 @@ describe("loadKeybindingConfig", () => {
 
     const result = loadKeybindingConfig();
 
-    expect(result?.customKeymap).toEqual({ a: "a", s: "r" });
+    expect(result).not.toBeNull();
+    expect(result!.customKeymap).toEqual({ a: "a", s: "r" });
   });
 
   it("データなしの場合 null を返す", () => {
@@ -689,7 +690,7 @@ describe("loadKeybindingConfig のバージョンマイグレーション", () =
     const result = loadKeybindingConfig();
 
     expect(result).not.toBeNull();
-    expect(result?.version).toBe(1);
+    expect(result!.version).toBe(1);
   });
 
   it("v0 データを読み込んだ後 name や bindings が保持される", () => {
@@ -804,6 +805,7 @@ describe("saveKeybindingConfig の version 保持", () => {
 
     const result = loadKeybindingConfig();
 
-    expect(result?.version).toBe(1);
+    expect(result).not.toBeNull();
+    expect(result!.version).toBe(1);
   });
 });
