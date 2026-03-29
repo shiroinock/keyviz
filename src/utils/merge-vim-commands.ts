@@ -64,7 +64,7 @@ export function mergeWithNvimMaps(
  * キーとモードの組み合わせからエントリのユニーク性キーを生成する
  */
 function makeEntryKey(key: string, modes: VimMode[]): string {
-  return `${key}:${JSON.stringify(modes)}`;
+  return `${key}:${[...modes].sort().join(",")}`;
 }
 
 /**
@@ -80,8 +80,8 @@ function findMatchingEntry(
   return merged.find((c) => {
     if (c.key !== key) return false;
     if (c.modes === undefined) {
-      // modes 未設定のエントリはキーのみで照合（後方互換）
-      return true;
+      // modes 未設定のエントリはノーマルモード相当として照合
+      return expandedModes.includes("n");
     }
     // modes がある場合は expandedModes と交差があるかで照合
     return c.modes.some((m) => expandedModes.includes(m));
