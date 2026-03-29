@@ -8,6 +8,12 @@
   min-height: 48px;
   display: flex;
   align-items: center;
+  outline: none;
+}
+
+.container:focus-visible {
+  outline: 2px solid #89b4fa;
+  outline-offset: 2px;
 }
 
 .placeholder {

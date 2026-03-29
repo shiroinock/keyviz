@@ -9,8 +9,7 @@ export interface KeyCaptureProps {
 
 export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const capturedKeyRef = useRef<string | null>(null); // クロージャの stale 回避用
-  const [capturedKey, setCapturedKey] = useState<string | null>(null); // レンダー用
+  const [capturedKey, setCapturedKey] = useState<string | null>(null);
 
   useEffect(() => {
     containerRef.current?.focus();
@@ -29,23 +28,18 @@ export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
 
     e.preventDefault();
 
-    if (vimKey === "<CR>" && capturedKeyRef.current !== null) {
-      const key = capturedKeyRef.current;
-      capturedKeyRef.current = null;
+    if (vimKey === "<CR>" && capturedKey !== null) {
       setCapturedKey(null);
-      onConfirm(key);
+      onConfirm(capturedKey);
       return;
     }
 
-    if (vimKey === capturedKeyRef.current) {
-      const key = capturedKeyRef.current;
-      capturedKeyRef.current = null;
+    if (vimKey === capturedKey) {
       setCapturedKey(null);
-      onConfirm(key);
+      onConfirm(capturedKey);
       return;
     }
 
-    capturedKeyRef.current = vimKey;
     setCapturedKey(vimKey);
   };
 

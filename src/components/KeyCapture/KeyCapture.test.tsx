@@ -161,6 +161,16 @@ describe("KeyCapture", () => {
       expect(props.onConfirm).toHaveBeenCalledOnce();
       expect(props.onConfirm).toHaveBeenCalledWith("f");
     });
+
+    test("修飾キー付きの同じキーを2回押すと onConfirm が正しい Vim 表記で呼ばれる", () => {
+      const props = createProps();
+      render(<KeyCapture {...props} />);
+      const el = screen.getByLabelText("キー入力キャプチャ");
+      fireEvent.keyDown(el, { key: "a", ctrlKey: true });
+      fireEvent.keyDown(el, { key: "a", ctrlKey: true });
+      expect(props.onConfirm).toHaveBeenCalledOnce();
+      expect(props.onConfirm).toHaveBeenCalledWith("<C-a>");
+    });
   });
 
   describe("Enter（未キャプチャ時）", () => {
