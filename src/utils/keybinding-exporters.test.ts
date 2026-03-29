@@ -429,9 +429,7 @@ describe("keybindingToJSON", () => {
     });
 
     it("customKeymap が未定義の場合は JSON にも含まれない", () => {
-      const { customKeymap: _customKeymap, ...configWithoutKeymap } =
-        makeConfig();
-      const config = configWithoutKeymap as KeybindingConfig;
+      const config = makeConfig();
 
       const result = keybindingToJSON(config);
       const parsed = JSON.parse(result);
