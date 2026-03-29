@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useRef } from "react";
 import { useKeybindingConfig } from "../hooks/useKeybindingConfig";
 import type {
   Keybinding,
@@ -23,12 +23,10 @@ export function KeybindingProvider({
   children: React.ReactNode;
   initial?: KeybindingConfig;
 }) {
-  // biome-ignore lint/correctness/useExhaustiveDependencies: initial は useReducer の初期値にのみ使用され再計算不要
-  const resolvedInitial = useMemo(
-    () => initial ?? loadKeybindingConfig() ?? undefined,
-    [],
+  const resolvedInitialRef = useRef<KeybindingConfig | undefined>(
+    initial ?? loadKeybindingConfig() ?? undefined,
   );
-  const value = useKeybindingConfig(resolvedInitial);
+  const value = useKeybindingConfig(resolvedInitialRef.current);
   return (
     <KeybindingContext.Provider value={value}>
       {children}
