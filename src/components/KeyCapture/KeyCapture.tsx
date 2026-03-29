@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { normalizeKeyEvent } from "../../utils/key-event";
 import styles from "./KeyCapture.module.css";
 
@@ -12,55 +12,42 @@ export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
   const capturedKeyRef = useRef<string | null>(null); // クロージャの stale 回避用
   const [capturedKey, setCapturedKey] = useState<string | null>(null); // レンダー用
 
-  const onConfirmRef = useRef(onConfirm);
-  const onCancelRef = useRef(onCancel);
-  onConfirmRef.current = onConfirm;
-  onCancelRef.current = onCancel;
-
   useEffect(() => {
     containerRef.current?.focus();
   }, []);
 
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
+  const handleKeyDown = (e: KeyboardEvent) => {
+    const vimKey = normalizeKeyEvent(e.nativeEvent);
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const vimKey = normalizeKeyEvent(e);
+    if (vimKey === "") return;
 
-      if (vimKey === "") return;
-
-      if (vimKey === "<Esc>") {
-        e.preventDefault();
-        onCancelRef.current();
-        return;
-      }
-
+    if (vimKey === "<Esc>") {
       e.preventDefault();
+      onCancel();
+      return;
+    }
 
-      if (vimKey === "<CR>" && capturedKeyRef.current !== null) {
-        const key = capturedKeyRef.current;
-        capturedKeyRef.current = null;
-        setCapturedKey(null);
-        onConfirmRef.current(key);
-        return;
-      }
+    e.preventDefault();
 
-      if (vimKey === capturedKeyRef.current) {
-        const key = capturedKeyRef.current;
-        capturedKeyRef.current = null;
-        setCapturedKey(null);
-        onConfirmRef.current(key);
-        return;
-      }
+    if (vimKey === "<CR>" && capturedKeyRef.current !== null) {
+      const key = capturedKeyRef.current;
+      capturedKeyRef.current = null;
+      setCapturedKey(null);
+      onConfirm(key);
+      return;
+    }
 
-      capturedKeyRef.current = vimKey;
-      setCapturedKey(vimKey);
-    };
+    if (vimKey === capturedKeyRef.current) {
+      const key = capturedKeyRef.current;
+      capturedKeyRef.current = null;
+      setCapturedKey(null);
+      onConfirm(key);
+      return;
+    }
 
-    el.addEventListener("keydown", handleKeyDown);
-    return () => el.removeEventListener("keydown", handleKeyDown);
-  }, []);
+    capturedKeyRef.current = vimKey;
+    setCapturedKey(vimKey);
+  };
 
   return (
     <div
@@ -68,8 +55,8 @@ export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
       className={styles.container}
       role="application"
       aria-label="キー入力キャプチャ"
-      // biome-ignore lint/a11y/noNoninteractiveTabindex: キーキャプチャにフォーカスが必要
-      tabIndex={0}
+      tabIndex={-1}
+      onKeyDown={handleKeyDown}
     >
       {capturedKey === null ? (
         <span className={styles.placeholder}>キーを押してください…</span>
