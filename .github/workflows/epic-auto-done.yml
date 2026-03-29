@@ -92,7 +92,12 @@ jobs:
             fi
 
             TOTAL=$(echo "$SUBISSUES" | jq '.data.repository.issue.subIssues.totalCount')
+            NODE_COUNT=$(echo "$SUBISSUES" | jq '.data.repository.issue.subIssues.nodes | length')
             CLOSED_COUNT=$(echo "$SUBISSUES" | jq '[.data.repository.issue.subIssues.nodes[] | select(.state == "CLOSED")] | length')
+
+            if [ "$NODE_COUNT" -lt "$TOTAL" ]; then
+              echo "::warning::Epic #${parent_number} has ${TOTAL} sub-issues but only ${NODE_COUNT} were fetched. Result may be incomplete."
+            fi
 
             echo "Epic #${parent_number}: total=${TOTAL}, closed=${CLOSED_COUNT}"
 
@@ -108,6 +113,7 @@ jobs:
 
             echo "All sub-issues closed for epic #${parent_number}. Finding project item..."
 
+            # user() は個人アカウントのプロジェクト用。Org の場合は organization() に変更
             ITEM_ID=$(GH_TOKEN="$PROJECT_TOKEN" gh api graphql -f query='
               query($owner: String!, $number: Int!) {
                 user(login: $owner) {
@@ -126,7 +132,8 @@ jobs:
                 }
               }' -f owner="$PROJECT_OWNER" \
                  -F number="$PROJECT_NUMBER" \
-              --jq ".data.user.projectV2.items.nodes[] | select(.content.number == ${parent_number}) | .id") || {
+              --argjson pnum "$parent_number" \
+              --jq '.data.user.projectV2.items.nodes[] | select(.content.number == $pnum) | .id') || {
               echo "::warning::Failed to query project items for epic #${parent_number}"
               continue
             }
@@ -177,7 +184,9 @@ jobs:
                   }
                 }' -f owner="$PROJECT_OWNER" \
                    -F number="$PROJECT_NUMBER" \
-                --jq ".data.user.projectV2.items.nodes[] | select(.content.number == ${parent_number}) | .fieldValues.nodes[] | select(.field.id == \"${STATUS_FIELD_ID}\") | .optionId")
+                --argjson pnum "$parent_number" \
+                --arg sfid "$STATUS_FIELD_ID" \
+                --jq '.data.user.projectV2.items.nodes[] | select(.content.number == $pnum) | .fieldValues.nodes[] | select(.field.id == $sfid) | .optionId')
 
               echo "Attempt ${i}: current optionId=${CURRENT_STATUS}"
 
