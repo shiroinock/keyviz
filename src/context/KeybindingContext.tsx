@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef } from "react";
+import { createContext, useContext, useState } from "react";
 import { useKeybindingConfig } from "../hooks/useKeybindingConfig";
 import type {
   Keybinding,
@@ -24,10 +24,10 @@ export function KeybindingProvider({
   initial?: KeybindingConfig;
 }) {
   // null→undefined: useKeybindingConfig は undefined のみ受け付けるため
-  const resolvedInitialRef = useRef<KeybindingConfig | undefined>(
-    initial ?? loadKeybindingConfig() ?? undefined,
+  const [resolvedInitial] = useState<KeybindingConfig | undefined>(
+    () => initial ?? loadKeybindingConfig() ?? undefined,
   );
-  const value = useKeybindingConfig(resolvedInitialRef.current);
+  const value = useKeybindingConfig(resolvedInitial);
   return (
     <KeybindingContext.Provider value={value}>
       {children}

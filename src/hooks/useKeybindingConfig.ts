@@ -113,12 +113,12 @@ export function useKeybindingConfig(initial?: KeybindingConfig) {
     initial ?? createDefaultConfig(),
   );
 
-  // useReducer は状態変化時に必ず新しい参照を返すため、参照比較で変化を検知できる。
-  // リデューサー側で同一参照を返す最適化を入れる場合はここも要見直し。
-  const prevConfigRef = useRef(config);
+  const isFirstRender = useRef(true);
   useEffect(() => {
-    if (prevConfigRef.current === config) return;
-    prevConfigRef.current = config;
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     saveKeybindingConfig(config);
   }, [config]);
 

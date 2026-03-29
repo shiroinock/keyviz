@@ -1,4 +1,4 @@
-import type { KeybindingConfig, VimMode } from "../types/keybinding";
+import { type KeybindingConfig, VIM_MODES } from "../types/keybinding";
 
 const STORAGE_PREFIX = "keyviz:";
 const LAYOUT_KEY = `${STORAGE_PREFIX}layout`;
@@ -93,17 +93,6 @@ export function clearAllStorage(): void {
   clearKeymap();
   clearKeybindingConfig();
 }
-
-const VIM_MODES = [
-  "n",
-  "v",
-  "x",
-  "o",
-  "i",
-  "s",
-  "c",
-  "t",
-] as const satisfies VimMode[];
 
 // NOTE: bindings 内の個々の Keybinding オブジェクトは検証しない。
 // スキーマ変更時はここに移行ロジックを追加すること。
