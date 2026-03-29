@@ -59,10 +59,7 @@ export function ExportPanel() {
 
   const content = useMemo(() => {
     if (activeFormat === "langmap") {
-      // langmap は bindings ではなく customKeymap に依存する
-      return config.customKeymap !== undefined
-        ? keybindingToLangmap(config)
-        : "";
+      return keybindingToLangmap(config);
     }
     if (!hasBindings) return "";
     return activeFormat === "lua"
@@ -158,7 +155,7 @@ export function ExportPanel() {
           <pre className={styles.preview}>{content}</pre>
         ) : activeFormat === "langmap" ? (
           <p className={styles.empty}>
-            カスタムキーマップが設定されていません。レイアウトを読み込んでください。
+            カスタムキーマップが設定されていないか、マッピングがありません。レイアウトを読み込んでください。
           </p>
         ) : (
           <p className={styles.empty}>

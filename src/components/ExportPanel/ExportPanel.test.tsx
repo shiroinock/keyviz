@@ -485,7 +485,7 @@ describe("ExportPanel", () => {
 
         expect(
           screen.getByText(
-            "カスタムキーマップが設定されていません。レイアウトを読み込んでください。",
+            "カスタムキーマップが設定されていないか、マッピングがありません。レイアウトを読み込んでください。",
           ),
         ).toBeInTheDocument();
       });
