@@ -1,10 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { KeybindingConfig } from "../types/keybinding";
 import {
   clearAllStorage,
+  clearKeybindingConfig,
   clearKeymap,
   clearLayout,
+  isStoredKeybindingConfig,
+  loadKeybindingConfig,
   loadKeymap,
   loadLayout,
+  saveKeybindingConfig,
   saveKeymap,
   saveLayout,
 } from "./storage";
@@ -150,6 +155,236 @@ describe("clearAllStorage", () => {
 
     expect(loadLayout()).toBeNull();
     expect(loadKeymap()).toBeNull();
+  });
+
+  it("keybinding-config もクリアされる", () => {
+    const config: KeybindingConfig = {
+      name: "Test Config",
+      bindings: { n: [], v: [], x: [], o: [], i: [], s: [], c: [], t: [] },
+      createdAt: "2024-01-01T00:00:00.000Z",
+      updatedAt: "2024-01-01T00:00:00.000Z",
+    };
+    saveKeybindingConfig(config);
+
+    clearAllStorage();
+
+    expect(loadKeybindingConfig()).toBeNull();
+  });
+});
+
+const validConfig: KeybindingConfig = {
+  name: "My Config",
+  bindings: { n: [], v: [], x: [], o: [], i: [], s: [], c: [], t: [] },
+  createdAt: "2024-01-01T00:00:00.000Z",
+  updatedAt: "2024-01-02T00:00:00.000Z",
+};
+
+describe("saveKeybindingConfig", () => {
+  it('"keyviz:keybinding-config" キーに JSON 形式で保存する', () => {
+    saveKeybindingConfig(validConfig);
+
+    expect(localStorageMock.setItem).toHaveBeenCalledWith(
+      "keyviz:keybinding-config",
+      expect.any(String),
+    );
+  });
+
+  it("保存値が KeybindingConfig と一致する", () => {
+    saveKeybindingConfig(validConfig);
+
+    const storedRaw = localStorageMock.getItem("keyviz:keybinding-config");
+    expect(storedRaw).not.toBeNull();
+    const stored = JSON.parse(storedRaw as string);
+    expect(stored).toEqual(validConfig);
+  });
+
+  it("上書き保存した場合は最新の値が返る", () => {
+    const oldConfig: KeybindingConfig = {
+      ...validConfig,
+      name: "Old Config",
+    };
+    const newConfig: KeybindingConfig = {
+      ...validConfig,
+      name: "New Config",
+    };
+    saveKeybindingConfig(oldConfig);
+
+    saveKeybindingConfig(newConfig);
+    const result = loadKeybindingConfig();
+
+    expect(result?.name).toBe("New Config");
+  });
+});
+
+describe("loadKeybindingConfig", () => {
+  it("saveKeybindingConfig → loadKeybindingConfig のラウンドトリップが正しい", () => {
+    saveKeybindingConfig(validConfig);
+
+    const result = loadKeybindingConfig();
+
+    expect(result).not.toBeNull();
+    expect(result?.name).toBe(validConfig.name);
+    expect(result?.bindings).toEqual(validConfig.bindings);
+    expect(result?.createdAt).toBe(validConfig.createdAt);
+    expect(result?.updatedAt).toBe(validConfig.updatedAt);
+  });
+
+  it("customKeymap が保持される", () => {
+    const configWithKeymap: KeybindingConfig = {
+      ...validConfig,
+      customKeymap: { a: "a", s: "r" },
+    };
+    saveKeybindingConfig(configWithKeymap);
+
+    const result = loadKeybindingConfig();
+
+    expect(result?.customKeymap).toEqual({ a: "a", s: "r" });
+  });
+
+  it("データなしの場合 null を返す", () => {
+    const result = loadKeybindingConfig();
+
+    expect(result).toBeNull();
+  });
+
+  it("壊れた JSON の場合 null を返す", () => {
+    localStorageMock.setItem("keyviz:keybinding-config", "{ broken json ::::");
+
+    const result = loadKeybindingConfig();
+
+    expect(result).toBeNull();
+  });
+
+  it("型ガードに失敗するデータの場合 null を返す", () => {
+    localStorageMock.setItem(
+      "keyviz:keybinding-config",
+      JSON.stringify({ invalid: true }),
+    );
+
+    const result = loadKeybindingConfig();
+
+    expect(result).toBeNull();
+  });
+});
+
+describe("clearKeybindingConfig", () => {
+  it("keybinding-config がクリアされ loadKeybindingConfig が null を返す", () => {
+    saveKeybindingConfig(validConfig);
+
+    clearKeybindingConfig();
+
+    expect(loadKeybindingConfig()).toBeNull();
+  });
+
+  it("keybinding-config のみクリアされ layout と keymap は残る", () => {
+    saveLayout('{"layout":true}', "Layout");
+    saveKeymap("[[1,2,3]]", 3, "Keymap");
+    saveKeybindingConfig(validConfig);
+
+    clearKeybindingConfig();
+
+    expect(loadKeybindingConfig()).toBeNull();
+    expect(loadLayout()).not.toBeNull();
+    expect(loadKeymap()).not.toBeNull();
+  });
+
+  it('"keyviz:keybinding-config" キーで removeItem が呼ばれる', () => {
+    clearKeybindingConfig();
+
+    expect(localStorageMock.removeItem).toHaveBeenCalledWith(
+      "keyviz:keybinding-config",
+    );
+  });
+});
+
+describe("isStoredKeybindingConfig", () => {
+  it("正常な KeybindingConfig は true を返す", () => {
+    expect(isStoredKeybindingConfig(validConfig)).toBe(true);
+  });
+
+  it("customKeymap を含む場合も true を返す", () => {
+    const configWithKeymap = { ...validConfig, customKeymap: { a: "a" } };
+    expect(isStoredKeybindingConfig(configWithKeymap)).toBe(true);
+  });
+
+  it("name フィールドが欠落している場合 false を返す", () => {
+    const { name: _name, ...withoutName } = validConfig;
+    expect(isStoredKeybindingConfig(withoutName)).toBe(false);
+  });
+
+  it("bindings フィールドが欠落している場合 false を返す", () => {
+    const { bindings: _bindings, ...withoutBindings } = validConfig;
+    expect(isStoredKeybindingConfig(withoutBindings)).toBe(false);
+  });
+
+  it("createdAt フィールドが欠落している場合 false を返す", () => {
+    const { createdAt: _createdAt, ...withoutCreatedAt } = validConfig;
+    expect(isStoredKeybindingConfig(withoutCreatedAt)).toBe(false);
+  });
+
+  it("updatedAt フィールドが欠落している場合 false を返す", () => {
+    const { updatedAt: _updatedAt, ...withoutUpdatedAt } = validConfig;
+    expect(isStoredKeybindingConfig(withoutUpdatedAt)).toBe(false);
+  });
+
+  it("name が string でない場合 false を返す", () => {
+    const withInvalidName = { ...validConfig, name: 42 };
+    expect(isStoredKeybindingConfig(withInvalidName)).toBe(false);
+  });
+
+  it("bindings がオブジェクトでない場合 false を返す", () => {
+    const withInvalidBindings = { ...validConfig, bindings: "invalid" };
+    expect(isStoredKeybindingConfig(withInvalidBindings)).toBe(false);
+  });
+
+  it("bindings が空オブジェクトの場合 false を返す", () => {
+    const withEmptyBindings = { ...validConfig, bindings: {} };
+    expect(isStoredKeybindingConfig(withEmptyBindings)).toBe(false);
+  });
+
+  it("bindings にモードキーが不足している場合 false を返す", () => {
+    const withPartialBindings = {
+      ...validConfig,
+      bindings: { n: [], v: [] },
+    };
+    expect(isStoredKeybindingConfig(withPartialBindings)).toBe(false);
+  });
+
+  it("bindings のモードキーの値が配列でない場合 false を返す", () => {
+    const withNonArrayMode = {
+      ...validConfig,
+      bindings: {
+        n: "not-array",
+        v: [],
+        x: [],
+        o: [],
+        i: [],
+        s: [],
+        c: [],
+        t: [],
+      },
+    };
+    expect(isStoredKeybindingConfig(withNonArrayMode)).toBe(false);
+  });
+
+  it("createdAt が string でない場合 false を返す", () => {
+    const withInvalidCreatedAt = { ...validConfig, createdAt: 12345 };
+    expect(isStoredKeybindingConfig(withInvalidCreatedAt)).toBe(false);
+  });
+
+  it("updatedAt が string でない場合 false を返す", () => {
+    const withInvalidUpdatedAt = { ...validConfig, updatedAt: null };
+    expect(isStoredKeybindingConfig(withInvalidUpdatedAt)).toBe(false);
+  });
+
+  it("null の場合 false を返す", () => {
+    expect(isStoredKeybindingConfig(null)).toBe(false);
+  });
+
+  it("プリミティブ値の場合 false を返す", () => {
+    expect(isStoredKeybindingConfig("string")).toBe(false);
+    expect(isStoredKeybindingConfig(42)).toBe(false);
+    expect(isStoredKeybindingConfig(undefined)).toBe(false);
   });
 });
 

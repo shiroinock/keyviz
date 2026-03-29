@@ -1,10 +1,11 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import { useKeybindingConfig } from "../hooks/useKeybindingConfig";
 import type {
   Keybinding,
   KeybindingConfig,
   VimMode,
 } from "../types/keybinding";
+import { loadKeybindingConfig } from "../utils/storage";
 
 interface KeybindingContextValue {
   config: KeybindingConfig;
@@ -22,7 +23,11 @@ export function KeybindingProvider({
   children: React.ReactNode;
   initial?: KeybindingConfig;
 }) {
-  const value = useKeybindingConfig(initial);
+  // null→undefined: useKeybindingConfig は undefined のみ受け付けるため
+  const [resolvedInitial] = useState<KeybindingConfig | undefined>(
+    () => initial ?? loadKeybindingConfig() ?? undefined,
+  );
+  const value = useKeybindingConfig(resolvedInitial);
   return (
     <KeybindingContext.Provider value={value}>
       {children}

@@ -1,6 +1,9 @@
+import { type KeybindingConfig, VIM_MODES } from "../types/keybinding";
+
 const STORAGE_PREFIX = "keyviz:";
 const LAYOUT_KEY = `${STORAGE_PREFIX}layout`;
 const KEYMAP_KEY = `${STORAGE_PREFIX}keymap`;
+const KEYBINDING_CONFIG_KEY = `${STORAGE_PREFIX}keybinding-config`;
 
 type StoredLayout = {
   json: string;
@@ -88,4 +91,51 @@ export function clearKeymap(): void {
 export function clearAllStorage(): void {
   clearLayout();
   clearKeymap();
+  clearKeybindingConfig();
+}
+
+// NOTE: bindings 内の個々の Keybinding オブジェクトは検証しない。
+// スキーマ変更時はここに移行ロジックを追加すること。
+function hasValidBindings(bindings: Record<string, unknown>): boolean {
+  return VIM_MODES.every(
+    (mode) => mode in bindings && Array.isArray(bindings[mode]),
+  );
+}
+
+export function isStoredKeybindingConfig(
+  value: unknown,
+): value is KeybindingConfig {
+  if (typeof value !== "object" || value === null) return false;
+
+  const v = value as Record<string, unknown>;
+
+  return (
+    "name" in v &&
+    typeof v.name === "string" &&
+    "bindings" in v &&
+    typeof v.bindings === "object" &&
+    v.bindings !== null &&
+    hasValidBindings(v.bindings as Record<string, unknown>) &&
+    "createdAt" in v &&
+    typeof v.createdAt === "string" &&
+    "updatedAt" in v &&
+    typeof v.updatedAt === "string"
+  );
+}
+
+export function saveKeybindingConfig(config: KeybindingConfig): void {
+  localStorage.setItem(KEYBINDING_CONFIG_KEY, JSON.stringify(config));
+}
+
+export function loadKeybindingConfig(): KeybindingConfig | null {
+  const raw = localStorage.getItem(KEYBINDING_CONFIG_KEY);
+  if (raw === null) return null;
+
+  const parsed = safeJsonParse(raw);
+  if (isStoredKeybindingConfig(parsed)) return parsed;
+  return null;
+}
+
+export function clearKeybindingConfig(): void {
+  localStorage.removeItem(KEYBINDING_CONFIG_KEY);
 }

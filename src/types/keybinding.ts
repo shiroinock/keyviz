@@ -3,6 +3,18 @@ import type { VimCommandCategory } from "./vim";
 /** Vim モード */
 export type VimMode = "n" | "v" | "x" | "o" | "i" | "s" | "c" | "t";
 
+/** VimMode の全値リスト */
+export const VIM_MODES = [
+  "n",
+  "v",
+  "x",
+  "o",
+  "i",
+  "s",
+  "c",
+  "t",
+] as const satisfies VimMode[];
+
 /** バインディングの出自 */
 export type KeybindingSource =
   | "default"

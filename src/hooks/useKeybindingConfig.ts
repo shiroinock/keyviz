@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useReducer } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 import type {
   Keybinding,
   KeybindingConfig,
@@ -6,6 +6,7 @@ import type {
 } from "../types/keybinding";
 import type { NvimMapping } from "../types/vim";
 import { createDefaultConfig } from "../utils/keybinding-defaults";
+import { saveKeybindingConfig } from "../utils/storage";
 
 // ── Actions ──
 
@@ -111,6 +112,15 @@ export function useKeybindingConfig(initial?: KeybindingConfig) {
     keybindingReducer,
     initial ?? createDefaultConfig(),
   );
+
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    saveKeybindingConfig(config);
+  }, [config]);
 
   /** lhs でバインディングを O(1) 検索するためのマップ */
   const bindingsByLhs = useMemo(() => {
