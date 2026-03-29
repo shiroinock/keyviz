@@ -431,7 +431,9 @@ describe("App - モードタブの動的生成", () => {
 
     renderAppContent(config);
 
-    await user.click(screen.getByRole("button", { name: "練習" }));
+    await user.click(
+      screen.getByRole("button", { name: APP_MODE_LABELS.practice }),
+    );
 
     expect(screen.getByTestId("practice-mode")).toBeInTheDocument();
   });
@@ -442,7 +444,9 @@ describe("App - モードタブの動的生成", () => {
 
     renderAppContent(config);
 
-    await user.click(screen.getByRole("button", { name: "辞書" }));
+    await user.click(
+      screen.getByRole("button", { name: APP_MODE_LABELS.reference }),
+    );
 
     expect(screen.getByTestId("command-reference")).toBeInTheDocument();
   });
@@ -453,7 +457,9 @@ describe("App - モードタブの動的生成", () => {
 
     renderAppContent(config);
 
-    await user.click(screen.getByRole("button", { name: "編集" }));
+    await user.click(
+      screen.getByRole("button", { name: APP_MODE_LABELS.edit }),
+    );
 
     expect(screen.getByTestId("binding-editor")).toBeInTheDocument();
   });
@@ -464,8 +470,12 @@ describe("App - モードタブの動的生成", () => {
 
     renderAppContent(config);
 
-    await user.click(screen.getByRole("button", { name: "練習" }));
-    await user.click(screen.getByRole("button", { name: "可視化" }));
+    await user.click(
+      screen.getByRole("button", { name: APP_MODE_LABELS.practice }),
+    );
+    await user.click(
+      screen.getByRole("button", { name: APP_MODE_LABELS.visualize }),
+    );
 
     expect(screen.getByTestId("export-panel")).toBeInTheDocument();
   });
