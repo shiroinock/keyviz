@@ -7,6 +7,7 @@ import {
 import styles from "./ExportPanel.module.css";
 
 type ExportFormat = "lua" | "json";
+type CopyStatus = "idle" | "copied" | "error";
 
 const FORMAT_LABELS: Record<ExportFormat, string> = {
   lua: "Lua",
@@ -25,12 +26,22 @@ const MIME_TYPES: Record<ExportFormat, string> = {
 
 const COPY_STATUS_RESET_MS = 2000;
 
+const COPY_STATUS_LABELS: Record<CopyStatus, string> = {
+  idle: "コピー",
+  copied: "コピー済み",
+  error: "失敗",
+};
+
+const COPY_STATUS_CLASS: Record<CopyStatus, string> = {
+  idle: "",
+  copied: styles.actionButtonSuccess,
+  error: styles.actionButtonError,
+};
+
 export function ExportPanel() {
   const { config } = useKeybindingContext();
   const [activeFormat, setActiveFormat] = useState<ExportFormat>("lua");
-  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">(
-    "idle",
-  );
+  const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
@@ -89,18 +100,6 @@ export function ExportPanel() {
     document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 0);
   }, [content, activeFormat]);
-
-  const COPY_STATUS_LABELS: Record<typeof copyStatus, string> = {
-    idle: "コピー",
-    copied: "コピー済み",
-    error: "失敗",
-  };
-
-  const COPY_STATUS_CLASS: Record<typeof copyStatus, string> = {
-    idle: "",
-    copied: styles.actionButtonSuccess,
-    error: styles.actionButtonError,
-  };
 
   return (
     <div className={styles.container}>
