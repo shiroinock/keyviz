@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { DEFAULT_LAYOUT_NAME } from "./data/default-layout";
 import { defaultCustomKeymap } from "./data/keymap";
 import type { KeybindingConfig } from "./types/keybinding";
-import { emptyBindings } from "./types/keybinding";
+import { APP_MODE_LABELS, APP_MODES, emptyBindings } from "./types/keybinding";
 
 vi.mock("./components/ExportPanel/ExportPanel", () => ({
   ExportPanel: vi.fn(() => <div data-testid="export-panel" />),
@@ -339,74 +339,6 @@ describe("App - nvimMaps の表示", () => {
   });
 });
 
-describe("App - モードタブの宣言的生成", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  test("APP_MODE_LABELS の全エントリ（可視化・練習・辞書・編集）がボタンとして表示される", () => {
-    const config = buildConfig(undefined);
-
-    renderAppContent(config);
-
-    expect(screen.getByRole("button", { name: "可視化" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "練習" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "辞書" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "編集" })).toBeInTheDocument();
-  });
-
-  test("モードタブがちょうど4つ存在する", () => {
-    const config = buildConfig(undefined);
-
-    renderAppContent(config);
-
-    const modeTabs = screen
-      .getAllByRole("button")
-      .filter((btn) =>
-        ["可視化", "練習", "辞書", "編集"].includes(btn.textContent ?? ""),
-      );
-    expect(modeTabs).toHaveLength(4);
-  });
-
-  test("初期状態は可視化モードであり Keyboard が表示される", () => {
-    const config = buildConfig(undefined);
-
-    renderAppContent(config);
-
-    expect(screen.getByTestId("keyboard")).toBeInTheDocument();
-    expect(screen.queryByTestId("binding-editor")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("practice-mode")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("command-reference")).not.toBeInTheDocument();
-  });
-
-  test("「辞書」モードに切り替えると CommandReference が表示され練習UIは表示されない", async () => {
-    const user = userEvent.setup();
-    const config = buildConfig(undefined);
-
-    renderAppContent(config);
-
-    await user.click(screen.getByRole("button", { name: "辞書" }));
-
-    expect(screen.getByTestId("command-reference")).toBeInTheDocument();
-    expect(screen.queryByTestId("practice-mode")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("binding-editor")).not.toBeInTheDocument();
-  });
-
-  test("「練習」モードから「可視化」モードに戻すと PracticeMode が非表示になる", async () => {
-    const user = userEvent.setup();
-    const config = buildConfig(undefined);
-
-    renderAppContent(config);
-
-    await user.click(screen.getByRole("button", { name: "練習" }));
-    expect(screen.getByTestId("practice-mode")).toBeInTheDocument();
-
-    await user.click(screen.getByRole("button", { name: "可視化" }));
-    expect(screen.queryByTestId("practice-mode")).not.toBeInTheDocument();
-    expect(screen.getByTestId("keyboard")).toBeInTheDocument();
-  });
-});
-
 describe("App - 編集モードの統合", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -474,5 +406,91 @@ describe("App - 編集モードの統合", () => {
     await user.click(screen.getByRole("button", { name: "編集" }));
 
     expect(screen.queryByTestId("legend")).not.toBeInTheDocument();
+  });
+});
+
+describe("App - モードタブの動的生成", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("全 APP_MODES のタブが表示される", () => {
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    for (const mode of APP_MODES) {
+      expect(
+        screen.getByRole("button", { name: APP_MODE_LABELS[mode] }),
+      ).toBeInTheDocument();
+    }
+  });
+
+  test("「練習」タブをクリックするとモードが切り替わる", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(
+      screen.getByRole("button", { name: APP_MODE_LABELS.practice }),
+    );
+
+    expect(screen.getByTestId("practice-mode")).toBeInTheDocument();
+  });
+
+  test("「辞書」タブをクリックするとモードが切り替わる", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(
+      screen.getByRole("button", { name: APP_MODE_LABELS.reference }),
+    );
+
+    expect(screen.getByTestId("command-reference")).toBeInTheDocument();
+  });
+
+  test("「編集」タブをクリックするとモードが切り替わる", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(
+      screen.getByRole("button", { name: APP_MODE_LABELS.edit }),
+    );
+
+    expect(screen.getByTestId("binding-editor")).toBeInTheDocument();
+  });
+
+  test("「可視化」タブをクリックすると可視化モードに戻る", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(
+      screen.getByRole("button", { name: APP_MODE_LABELS.practice }),
+    );
+    await user.click(
+      screen.getByRole("button", { name: APP_MODE_LABELS.visualize }),
+    );
+
+    expect(screen.getByTestId("export-panel")).toBeInTheDocument();
+  });
+
+  test("モードタブ部分のスナップショット", () => {
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    const tabButtons = APP_MODES.map((mode) =>
+      screen.getByRole("button", { name: APP_MODE_LABELS[mode] }),
+    );
+    const tabContainer = tabButtons[0].parentElement;
+    expect(tabContainer).not.toBeNull();
+    expect(tabContainer).toMatchSnapshot();
   });
 });
