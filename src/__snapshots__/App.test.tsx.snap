@@ -1,0 +1,32 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`App - モードタブの動的生成 > モードタブ部分のスナップショット 1`] = `
+<div
+  class="_modeTabs_48b8bb"
+>
+  <button
+    class="_modeTab_48b8bb _modeTabActive_48b8bb"
+    type="button"
+  >
+    可視化
+  </button>
+  <button
+    class="_modeTab_48b8bb "
+    type="button"
+  >
+    練習
+  </button>
+  <button
+    class="_modeTab_48b8bb "
+    type="button"
+  >
+    辞書
+  </button>
+  <button
+    class="_modeTab_48b8bb "
+    type="button"
+  >
+    編集
+  </button>
+</div>
+`;
