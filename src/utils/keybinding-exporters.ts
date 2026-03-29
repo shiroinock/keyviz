@@ -13,16 +13,18 @@ export function keybindingToLua(config: KeybindingConfig): string {
     const bindings = config.bindings[mode];
     if (bindings.length === 0) continue;
 
+    lines.push(`-- ${mode} mode`);
     for (const binding of bindings) {
       const rhs = binding.rhs ?? binding.commandId;
       if (!rhs) continue;
       const lhsEscaped = escapeLua(binding.lhs);
       const rhsEscaped = escapeLua(rhs);
-      const opts = binding.noremap ? ", { noremap = true }" : "";
+      const noremapVal = binding.noremap ? "true" : "false";
       lines.push(
-        `vim.keymap.set("${mode}", "${lhsEscaped}", "${rhsEscaped}"${opts})`,
+        `vim.keymap.set("${mode}", "${lhsEscaped}", "${rhsEscaped}", { noremap = ${noremapVal} })`,
       );
     }
+    lines.push("");
   }
 
   return lines.join("\n");

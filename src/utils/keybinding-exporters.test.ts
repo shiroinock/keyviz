@@ -126,7 +126,7 @@ describe("keybindingToLua", () => {
       expect(result).toContain("{ noremap = true }");
     });
 
-    it("noremap: false の場合は { noremap = true } オプションを付けない", () => {
+    it("noremap: false の場合は { noremap = false } オプションを付与する", () => {
       const config = makeConfig({
         bindings: {
           ...emptyBindings(),
@@ -136,7 +136,7 @@ describe("keybindingToLua", () => {
 
       const result = keybindingToLua(config);
 
-      expect(result).not.toContain("{ noremap = true }");
+      expect(result).toContain("{ noremap = false }");
     });
   });
 
@@ -167,7 +167,7 @@ describe("keybindingToLua", () => {
       expect(result).toContain('"t"');
     });
 
-    it("バインディングが空のモードは出力されない（または空行にならない）", () => {
+    it("バインディングが空のモードは出力されない", () => {
       const config = makeConfig({
         bindings: {
           ...emptyBindings(),
@@ -177,9 +177,8 @@ describe("keybindingToLua", () => {
 
       const result = keybindingToLua(config);
 
-      // n モードのバインディングは存在する
-      expect(result).toContain('"n"');
-      // 空モードは vim.keymap.set を生成しない
+      expect(result).toContain("-- n mode");
+      expect(result).not.toContain("-- v mode");
       const lines = result
         .split("\n")
         .filter((line) => line.includes('vim.keymap.set("v"'));
