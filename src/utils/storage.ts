@@ -94,8 +94,19 @@ export function clearAllStorage(): void {
   clearKeybindingConfig();
 }
 
-const VIM_MODES: VimMode[] = ["n", "v", "x", "o", "i", "s", "c", "t"];
+const VIM_MODES = [
+  "n",
+  "v",
+  "x",
+  "o",
+  "i",
+  "s",
+  "c",
+  "t",
+] as const satisfies VimMode[];
 
+// NOTE: bindings 内の個々の Keybinding オブジェクトは検証しない。
+// スキーマ変更時はここに移行ロジックを追加すること。
 function hasValidBindings(bindings: Record<string, unknown>): boolean {
   return VIM_MODES.every(
     (mode) => mode in bindings && Array.isArray(bindings[mode]),

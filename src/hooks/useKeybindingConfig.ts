@@ -113,7 +113,8 @@ export function useKeybindingConfig(initial?: KeybindingConfig) {
     initial ?? createDefaultConfig(),
   );
 
-  // config が実際に変更された場合のみ保存（初回・StrictMode 再マウント時はスキップ）
+  // useReducer は状態変化時に必ず新しい参照を返すため、参照比較で変化を検知できる。
+  // リデューサー側で同一参照を返す最適化を入れる場合はここも要見直し。
   const prevConfigRef = useRef(config);
   useEffect(() => {
     if (prevConfigRef.current === config) return;

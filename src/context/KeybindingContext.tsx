@@ -23,6 +23,7 @@ export function KeybindingProvider({
   children: React.ReactNode;
   initial?: KeybindingConfig;
 }) {
+  // null→undefined: useKeybindingConfig は undefined のみ受け付けるため
   const resolvedInitialRef = useRef<KeybindingConfig | undefined>(
     initial ?? loadKeybindingConfig() ?? undefined,
   );
