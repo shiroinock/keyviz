@@ -150,7 +150,9 @@ export async function connectVialDevice(): Promise<VialDevice> {
  * Vial デバイスとの接続を切断する
  */
 export async function disconnectVialDevice(device: VialDevice): Promise<void> {
-  await device.hid.close();
+  if (device.hid.opened) {
+    await device.hid.close();
+  }
 }
 
 /**
@@ -206,34 +208,7 @@ export async function getKeyboardDefinition(
   }
 
   // gzip 解凍
-  // テスト環境でのモック互換性のため globalThis 経由で参照し、
-  // アロー関数モックの場合は new なしで呼び出す
-  type DecompressionStreamLike = {
-    readable: {
-      getReader: () => {
-        read: () => Promise<{ value: Uint8Array | undefined; done: boolean }>;
-      };
-    };
-    writable: {
-      getWriter: () => { write: (data: Uint8Array) => void; close: () => void };
-    };
-  };
-  type DecompressionStreamFactory = (format: string) => DecompressionStreamLike;
-  const DSCtor = (globalThis as Record<string, unknown>).DecompressionStream as
-    | (new (
-        format: string,
-      ) => DecompressionStreamLike)
-    | DecompressionStreamFactory;
-
-  let ds: DecompressionStreamLike;
-  try {
-    ds = new (DSCtor as new (format: string) => DecompressionStreamLike)(
-      "gzip",
-    );
-  } catch {
-    // テスト環境のモックはアロー関数のため new が使えない場合は関数として呼ぶ
-    ds = (DSCtor as DecompressionStreamFactory)("gzip");
-  }
+  const ds = new DecompressionStream("gzip");
   const writer = ds.writable.getWriter();
   writer.write(compressedData);
   writer.close();
@@ -264,7 +239,12 @@ export async function getKeyboardDefinition(
  * QMK キーコード数値をキーコード文字列に変換する
  */
 function keycodeToString(keycode: number): string {
-  return QMK_KEYCODE_MAP[keycode] ?? "KC_NO";
+  if (keycode === 0) return "KC_NO";
+  if (keycode === 1) return "KC_TRNS";
+  return (
+    QMK_KEYCODE_MAP[keycode] ??
+    `0x${keycode.toString(16).toUpperCase().padStart(4, "0")}`
+  );
 }
 
 /**

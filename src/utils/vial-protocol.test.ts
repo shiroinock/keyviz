@@ -38,12 +38,8 @@ const createMockHIDDevice = (
     productName: "Test Vial Keyboard",
     vendorId: 0x1234,
     productId: 0x5678,
-    open: vi.fn(async function (this: MockHIDDevice) {
-      this.opened = true;
-    }),
-    close: vi.fn(async function (this: MockHIDDevice) {
-      this.opened = false;
-    }),
+    open: vi.fn(),
+    close: vi.fn(),
     sendReport: vi.fn(),
     addEventListener: vi.fn((event: string, handler: InputReportHandler) => {
       if (event === "inputreport") {
@@ -62,7 +58,6 @@ const createMockHIDDevice = (
     ...overrides,
   };
 
-  // open/close が this を参照するように bind し直す
   device.open = vi.fn(async () => {
     device.opened = true;
   });
@@ -204,7 +199,7 @@ describe("disconnectVialDevice", () => {
     expect(mockDevice.close).toHaveBeenCalledTimes(1);
   });
 
-  it("既に close 済みのデバイスでもエラーを投げない", async () => {
+  it("既に close 済みのデバイスでは close を呼ばない", async () => {
     const mockDevice = createMockHIDDevice();
     mockDevice.opened = false;
     const vialDevice: VialDevice = {
@@ -212,7 +207,9 @@ describe("disconnectVialDevice", () => {
       productName: "Test Vial Keyboard",
     };
 
-    await expect(disconnectVialDevice(vialDevice)).resolves.not.toThrow();
+    await disconnectVialDevice(vialDevice);
+
+    expect(mockDevice.close).not.toHaveBeenCalled();
   });
 });
 
@@ -261,9 +258,15 @@ describe("getKeyboardDefinition", () => {
     );
 
     // DecompressionStream をモックして未圧縮データをそのまま返す
-    const DecompressionStreamMock = vi.fn(() =>
-      createDecompressionStreamMock(kleBytes),
-    );
+    class DecompressionStreamMock {
+      readable: ReturnType<typeof createDecompressionStreamMock>["readable"];
+      writable: ReturnType<typeof createDecompressionStreamMock>["writable"];
+      constructor() {
+        const mock = createDecompressionStreamMock(kleBytes);
+        this.readable = mock.readable;
+        this.writable = mock.writable;
+      }
+    }
     vi.stubGlobal("DecompressionStream", DecompressionStreamMock);
 
     const vialDevice: VialDevice = {
@@ -312,9 +315,15 @@ describe("getKeyboardDefinition", () => {
     );
 
     // DecompressionStream で KLE JSON バイト列を返すモック
-    const DecompressionStreamMock = vi.fn(() =>
-      createDecompressionStreamMock(kleBytes),
-    );
+    class DecompressionStreamMock {
+      readable: ReturnType<typeof createDecompressionStreamMock>["readable"];
+      writable: ReturnType<typeof createDecompressionStreamMock>["writable"];
+      constructor() {
+        const mock = createDecompressionStreamMock(kleBytes);
+        this.readable = mock.readable;
+        this.writable = mock.writable;
+      }
+    }
     vi.stubGlobal("DecompressionStream", DecompressionStreamMock);
 
     const vialDevice: VialDevice = {
