@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import type { AppMode } from "./keybinding";
-import { APP_MODE_LABELS, APP_MODES } from "./keybinding";
+import type { AppMode, KeybindingSource } from "./keybinding";
+import { APP_MODE_LABELS, APP_MODES, KEYBINDING_SOURCES } from "./keybinding";
 
 describe("APP_MODES", () => {
   test("4つの要素を持つ", () => {
@@ -18,6 +18,30 @@ describe("APP_MODES", () => {
   test("重複がない", () => {
     const unique = new Set<string>(APP_MODES);
     expect(unique.size).toBe(APP_MODES.length);
+  });
+});
+
+describe("KEYBINDING_SOURCES", () => {
+  test("4つの要素を持つ", () => {
+    expect(KEYBINDING_SOURCES).toHaveLength(4);
+  });
+
+  describe("全ての KeybindingSource 値を含む", () => {
+    const cases: KeybindingSource[] = [
+      "default",
+      "layout-derived",
+      "nvim-import",
+      "user-edit",
+    ];
+
+    test.each(cases)('"%s" を含む', (source) => {
+      expect(KEYBINDING_SOURCES).toContain(source);
+    });
+  });
+
+  test("重複がない", () => {
+    const unique = new Set<string>(KEYBINDING_SOURCES);
+    expect(unique.size).toBe(KEYBINDING_SOURCES.length);
   });
 });
 

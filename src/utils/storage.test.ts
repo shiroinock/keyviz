@@ -500,6 +500,42 @@ describe("isStoredKeybindingConfig", () => {
       expect(isStoredKeybindingConfig(config)).toBe(false);
     });
 
+    it('category が "unknown"（定義外の文字列）の場合 false を返す', () => {
+      const withUnknownCategory = { ...validBinding, category: "unknown" };
+      const config = {
+        ...validConfig,
+        bindings: { ...allModesWithBinding, n: [withUnknownCategory] },
+      };
+      expect(isStoredKeybindingConfig(config)).toBe(false);
+    });
+
+    it('category が ""（空文字列）の場合 false を返す', () => {
+      const withEmptyCategory = { ...validBinding, category: "" };
+      const config = {
+        ...validConfig,
+        bindings: { ...allModesWithBinding, n: [withEmptyCategory] },
+      };
+      expect(isStoredKeybindingConfig(config)).toBe(false);
+    });
+
+    it('source が "unknown"（定義外の文字列）の場合 false を返す', () => {
+      const withUnknownSource = { ...validBinding, source: "unknown" };
+      const config = {
+        ...validConfig,
+        bindings: { ...allModesWithBinding, n: [withUnknownSource] },
+      };
+      expect(isStoredKeybindingConfig(config)).toBe(false);
+    });
+
+    it('source が ""（空文字列）の場合 false を返す', () => {
+      const withEmptySource = { ...validBinding, source: "" };
+      const config = {
+        ...validConfig,
+        bindings: { ...allModesWithBinding, n: [withEmptySource] },
+      };
+      expect(isStoredKeybindingConfig(config)).toBe(false);
+    });
+
     it("一部のモードに正常な要素があり、別のモードに不正な要素がある場合 false を返す", () => {
       const { lhs: _lhs, ...withoutLhs } = validBinding;
       const config = {
