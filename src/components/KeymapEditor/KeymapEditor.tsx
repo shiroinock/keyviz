@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useKeybindingContext } from "../../context/KeybindingContext";
 import { defaultCustomKeymap } from "../../data/keymap";
 import { validateKeymap } from "../../utils/keymap-validator";
@@ -34,7 +34,7 @@ export function KeymapEditor() {
   const { config, dispatch } = useKeybindingContext();
   // customKeymap が未設定の場合は defaultCustomKeymap をフォールバックとして使用
   const keymap = config.customKeymap ?? defaultCustomKeymap;
-  const errors = validateKeymap(keymap);
+  const errors = useMemo(() => validateKeymap(keymap), [keymap]);
 
   // 現在インライン編集中のキー
   const [editingKey, setEditingKey] = useState<string | null>(null);
