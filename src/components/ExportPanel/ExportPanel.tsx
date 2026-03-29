@@ -31,7 +31,9 @@ export function ExportPanel() {
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">(
     "idle",
   );
-  const copyTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
 
   const hasBindings = useMemo(
     () => Object.values(config.bindings).some((bs) => bs.length > 0),
@@ -85,7 +87,7 @@ export function ExportPanel() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
   }, [content, activeFormat]);
 
   const copyLabel =

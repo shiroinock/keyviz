@@ -262,6 +262,7 @@ describe("ExportPanel", () => {
 
       await user.click(screen.getByRole("button", { name: "ダウンロード" }));
 
+      expect(capturedAnchor).toBeDefined();
       expect(capturedAnchor?.download).toBe("keyviz-config.lua");
     });
   });
@@ -288,6 +289,7 @@ describe("ExportPanel", () => {
       await user.click(screen.getByRole("button", { name: "JSON" }));
       await user.click(screen.getByRole("button", { name: "ダウンロード" }));
 
+      expect(capturedAnchor).toBeDefined();
       expect(capturedAnchor?.download).toBe("keyviz-config.json");
     });
   });
