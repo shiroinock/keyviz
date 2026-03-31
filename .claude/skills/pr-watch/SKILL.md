@@ -52,14 +52,18 @@ BRANCH=$(echo "$PR_INFO" | jq -r '.headRefName')
 ### 1. Phase 1: CI 監視
 
 ```bash
-# 最新のワークフロー実行を取得
-RUN_ID=$(gh run list --branch "$BRANCH" --limit 1 --json databaseId,status -q '.[0].databaseId')
+# ブランチの全ワークフロー実行を取得（--limit 1 だと一部のワークフローを見落とす）
+gh run list --branch "$BRANCH" --json databaseId,name,status,conclusion \
+  --jq '[.[] | select(.status != "completed")]'
 
-# 完了を待機（--exit-status で成否を終了コードに反映）
-gh run watch "$RUN_ID" --exit-status
+# 全ワークフローの完了を待機（それぞれ --exit-status で成否を確認）
+for RUN_ID in $(gh run list --branch "$BRANCH" --json databaseId,status \
+  --jq '[.[] | select(.status != "completed")] | .[].databaseId'); do
+  gh run watch "$RUN_ID" --exit-status
+done
 ```
 
-**CI 成功時** → Phase 2 へ
+**全ワークフロー成功時** → Phase 2 へ
 
 **CI 失敗時**:
 ```bash
