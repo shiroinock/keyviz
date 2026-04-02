@@ -13,11 +13,16 @@ shift $((OPTIND - 1))
 
 commands=("$@")
 n=${#commands[@]}
-((n > 4)) && n=4
+if ((n > 4)); then
+  echo "警告: ${n} 件中先頭 4 件のみディスパッチします" >&2
+  n=4
+fi
 
 escape_as() {
   local s="${1//\\/\\\\}"
-  printf '%s' "${s//\"/\\\"}"
+  s="${s//\"/\\\"}"
+  s="${s//$'\n'/\\n}"
+  printf '%s' "$s"
 }
 
 as="tell application \"Ghostty\"

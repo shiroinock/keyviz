@@ -7,8 +7,11 @@ FILE_PATH=$(cat | jq -r '.tool_input.file_path // empty')
 [[ "$FILE_PATH" == *"dispatch-queue.json" ]] || exit 0
 
 PROJECT_DIR=$(dirname "$(dirname "$FILE_PATH")")
-WORKDIR=$(jq -r '.workdir' "$FILE_PATH")
+WORKDIR=$(jq -r '.workdir // empty' "$FILE_PATH")
+[[ -n "$WORKDIR" ]] || { echo "dispatch-queue.json に workdir がありません" >&2; exit 1; }
+
 mapfile -t COMMANDS < <(jq -r '.commands[]' "$FILE_PATH")
+[[ ${#COMMANDS[@]} -gt 0 ]] || { echo "dispatch-queue.json に commands がありません" >&2; exit 1; }
 
 "$PROJECT_DIR/.claude/scripts/ghostty-dispatch.sh" -d "$WORKDIR" "${COMMANDS[@]}"
 rm -f "$FILE_PATH"

@@ -10,34 +10,46 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 MANIFEST="$PROJECT_DIR/.claude/dispatch-manifest.json"
 DONE_DIR="$PROJECT_DIR/.claude/dispatch-done"
+LOCK_FILE="$PROJECT_DIR/.claude/dispatch.lock"
+
+# Worktree 削除ヘルパー
+cleanup_worktree() {
+  local num="$1"
+  local wt="$PROJECT_DIR/.claude/worktrees/issue-$num"
+  if [[ -d "$wt" ]]; then
+    local branch
+    branch=$(git -C "$wt" branch --show-current 2>/dev/null || true)
+    git -C "$PROJECT_DIR" worktree remove "$wt" --force 2>/dev/null || true
+    [[ -n "$branch" ]] && git -C "$PROJECT_DIR" branch -D "$branch" 2>/dev/null || true
+  fi
+}
 
 mkdir -p "$DONE_DIR"
 touch "$DONE_DIR/$ISSUE"
 
-# Worktree 削除
-WT_PATH="$PROJECT_DIR/.claude/worktrees/issue-$ISSUE"
-if [[ -d "$WT_PATH" ]]; then
-  BRANCH=$(git -C "$WT_PATH" branch --show-current 2>/dev/null || true)
-  git -C "$PROJECT_DIR" worktree remove "$WT_PATH" --force 2>/dev/null || true
-  [[ -n "$BRANCH" ]] && git -C "$PROJECT_DIR" branch -D "$BRANCH" 2>/dev/null || true
-fi
+[[ -f "$MANIFEST" ]] || { cleanup_worktree "$ISSUE"; exit 0; }
 
-[[ -f "$MANIFEST" ]] || exit 0
+# flock で排他制御（TOCTOU 防止）
+exec 9>"$LOCK_FILE"
+flock -x 9
 
 # バリアチェック: 現在セットの全セッション完了を確認
 current_set=$(jq -r '.sets[] | select(.status == "dispatched") | .issues | map(tostring) | join(" ")' "$MANIFEST")
 for num in $current_set; do
-  [[ -f "$DONE_DIR/$num" ]] || exit 0
+  [[ -f "$DONE_DIR/$num" ]] || { cleanup_worktree "$ISSUE"; exit 0; }
 done
 
-# 現在セット完了 → manifest 更新、マーカー削除
+# 全セッション完了 → worktree 一括削除
+for num in $current_set; do cleanup_worktree "$num"; done
+
+# manifest 更新、マーカー削除
 jq '(.sets[] | select(.status == "dispatched")).status = "done"' "$MANIFEST" > "$MANIFEST.tmp" && mv "$MANIFEST.tmp" "$MANIFEST"
 for num in $current_set; do rm -f "$DONE_DIR/$num"; done
 
 # 次の pending セットを取得
 next_issues=$(jq -r '[.sets[] | select(.status == "pending")][0].issues // empty' "$MANIFEST")
 if [[ -z "$next_issues" || "$next_issues" == "null" ]]; then
-  rm -f "$MANIFEST"
+  rm -f "$MANIFEST" "$LOCK_FILE"
   rmdir "$DONE_DIR" 2>/dev/null || true
   exit 0
 fi

@@ -26,16 +26,6 @@
             "timeout": 30
           }
         ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/detect-merge.sh",
-            "timeout": 60
-          }
-        ]
       }
     ]
   }
