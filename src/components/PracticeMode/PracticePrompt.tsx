@@ -41,18 +41,18 @@ export function PracticePrompt({
   }
 
   const color = categoryColors[command.category];
-  const resultClass =
-    lastResult === "correct"
-      ? styles.correct
-      : lastResult === "incorrect"
-        ? styles.incorrect
-        : "";
 
   const showHint =
     inputSpec && (inputSpec.requiresShift || inputSpec.layerInfo);
 
   return (
-    <div className={cx(styles.panel, resultClass)}>
+    <div
+      className={cx(
+        styles.panel,
+        lastResult === "correct" && styles.correct,
+        lastResult === "incorrect" && styles.incorrect,
+      )}
+    >
       <div className={styles.prompt}>
         <span
           className={styles.badge}
