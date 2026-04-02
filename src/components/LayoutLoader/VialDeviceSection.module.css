@@ -1,9 +1,3 @@
-.label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ctp-text);
-}
-
 .vialSection {
   display: flex;
   flex-direction: column;

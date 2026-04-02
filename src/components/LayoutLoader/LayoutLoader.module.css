@@ -12,12 +12,6 @@
   min-width: 250px;
 }
 
-.label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ctp-text);
-}
-
 .dropzone {
   border: 2px dashed var(--ctp-surface2);
   border-radius: 8px;

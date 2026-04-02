@@ -1,4 +1,5 @@
 import { useVialDevice } from "../../hooks/useVialDevice";
+import sharedStyles from "./shared.module.css";
 import styles from "./VialDeviceSection.module.css";
 
 interface VialDeviceSectionProps {
@@ -17,7 +18,7 @@ export function VialDeviceSection({
 
   return (
     <div className={styles.vialSection}>
-      <span className={styles.label}>Vial デバイス</span>
+      <span className={sharedStyles.label}>Vial デバイス</span>
       {status === "disconnected" && (
         <button
           type="button"
