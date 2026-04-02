@@ -228,15 +228,11 @@ describe("VIM_MODE_META", () => {
   });
 
   describe("各エントリが label と short を持つ", () => {
-    test.each(
-      [...VIM_MODES],
-    )('"%s" エントリに label が存在する', (mode) => {
+    test.each([...VIM_MODES])('"%s" エントリに label が存在する', (mode) => {
       expect(typeof VIM_MODE_META[mode].label).toBe("string");
     });
 
-    test.each(
-      [...VIM_MODES],
-    )('"%s" エントリに short が存在する', (mode) => {
+    test.each([...VIM_MODES])('"%s" エントリに short が存在する', (mode) => {
       expect(typeof VIM_MODE_META[mode].short).toBe("string");
     });
   });
