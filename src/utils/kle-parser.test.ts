@@ -228,4 +228,10 @@ describe("isKLEJSON", () => {
 
     expect(isKLEJSON(json)).toBe(false);
   });
+
+  it("行要素に文字列とオブジェクトが混在する場合 true を返す（KLE の典型フォーマット）", () => {
+    const json = [[{ x: 0.5 }, "0,0", { w: 1.5 }, "1,0"]];
+
+    expect(isKLEJSON(json)).toBe(true);
+  });
 });
