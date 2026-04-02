@@ -3,6 +3,7 @@ import { DEFAULT_LAYOUT_NAME } from "../../data/default-layout";
 import { getPresets } from "../../data/keybinding-presets";
 import type { KeybindingPreset } from "../../types/keybinding";
 import styles from "./LayoutLoader.module.css";
+import sharedStyles from "./shared.module.css";
 import { VialDeviceSection } from "./VialDeviceSection";
 
 /** カスタム選択肢の value 定数 */
@@ -49,7 +50,7 @@ function FileDropZone({
 
   return (
     <div className={styles.dropzoneGroup}>
-      <span className={styles.label}>{label}</span>
+      <span className={sharedStyles.label}>{label}</span>
       {/* biome-ignore lint/a11y/useSemanticElements: ドロップゾーンは drag&drop 対応のため div が必要 */}
       <div
         role="button"
@@ -159,7 +160,7 @@ export function LayoutLoader({
       />
       {/* select + dropzone を束ねるため、ラベルは group 直下に配置 */}
       <div className={styles.keymapGroup}>
-        <span className={styles.label}>2. キーマップ</span>
+        <span className={sharedStyles.label}>2. キーマップ</span>
         <select
           className={styles.presetSelect}
           value={selectedValue}
