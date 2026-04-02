@@ -55,6 +55,7 @@ export function useVialDevice(
   const [status, setStatus] = useState<VialConnectionStatus>("disconnected");
   const [error, setError] = useState<string | null>(null);
   const [deviceName, setDeviceName] = useState<string | null>(null);
+  const [isSupported] = useState(() => isWebHIDSupported());
 
   // disconnect 時に参照できるようデバイスを ref で保持
   const deviceRef = useRef<VialDevice | null>(null);
@@ -64,20 +65,19 @@ export function useVialDevice(
     setStatus("connecting");
     setError(null);
 
-    // 既存デバイスがあれば先に切断
-    if (deviceRef.current !== null) {
-      if (disconnectHandlerRef.current !== null) {
-        deviceRef.current.hid.removeEventListener(
-          "disconnect",
-          disconnectHandlerRef.current,
-        );
-        disconnectHandlerRef.current = null;
-      }
-      await disconnectVialDevice(deviceRef.current);
-      deviceRef.current = null;
-    }
-
     try {
+      // 既存デバイスがあれば先に切断
+      if (deviceRef.current !== null) {
+        if (disconnectHandlerRef.current !== null) {
+          deviceRef.current.hid.removeEventListener(
+            "disconnect",
+            disconnectHandlerRef.current,
+          );
+          disconnectHandlerRef.current = null;
+        }
+        await disconnectVialDevice(deviceRef.current);
+        deviceRef.current = null;
+      }
       const device = await connectVialDevice();
       deviceRef.current = device;
 
@@ -90,10 +90,7 @@ export function useVialDevice(
         // VIADefinition の場合: matrix からサイズを計算
         const matrix = definition.matrix ?? DEFAULT_MATRIX;
         matrixSize = matrix.rows * matrix.cols;
-        layers =
-          definition.layouts.labels !== undefined
-            ? definition.layouts.labels.length + 1
-            : DEFAULT_LAYERS;
+        layers = DEFAULT_LAYERS;
       } else {
         // KLE JSON（配列）の場合: キー数をカウントしてデフォルトレイヤーを使用
         const flatKeys = definition.flat();
@@ -142,14 +139,17 @@ export function useVialDevice(
     setError(null);
   }, []);
 
-  // アンマウント時にイベントリスナーをクリーンアップ
+  // アンマウント時にデバイス切断とイベントリスナーをクリーンアップ
   useEffect(() => {
     return () => {
-      if (deviceRef.current !== null && disconnectHandlerRef.current !== null) {
-        deviceRef.current.hid.removeEventListener(
-          "disconnect",
-          disconnectHandlerRef.current,
-        );
+      if (deviceRef.current !== null) {
+        if (disconnectHandlerRef.current !== null) {
+          deviceRef.current.hid.removeEventListener(
+            "disconnect",
+            disconnectHandlerRef.current,
+          );
+        }
+        void disconnectVialDevice(deviceRef.current);
       }
     };
   }, []);
@@ -160,6 +160,6 @@ export function useVialDevice(
     deviceName,
     connect,
     disconnect,
-    isSupported: isWebHIDSupported(),
+    isSupported,
   };
 }

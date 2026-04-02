@@ -210,7 +210,7 @@ describe("connect()", () => {
     );
   });
 
-  it("VIADefinition に labels がない場合、layers のデフォルト値 4 で getKeymapData を呼ぶ", async () => {
+  it("layers のデフォルト値 4 で getKeymapData を呼ぶ", async () => {
     const definitionWithoutLabels = {
       name: "Test KB",
       layouts: {
