@@ -156,7 +156,7 @@ export function isKLEJSON(json: unknown): json is KLEJSON {
       row.every(
         (item) =>
           typeof item === "string" ||
-          (typeof item === "object" && item !== null),
+          (typeof item === "object" && item !== null && !Array.isArray(item)),
       ),
   );
 }

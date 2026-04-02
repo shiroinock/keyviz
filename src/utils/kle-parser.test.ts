@@ -222,4 +222,10 @@ describe("isKLEJSON", () => {
 
     expect(isKLEJSON(json)).toBe(true);
   });
+
+  it("行要素に配列が含まれる場合 false を返す", () => {
+    const json = [[[]]];
+
+    expect(isKLEJSON(json)).toBe(false);
+  });
 });
