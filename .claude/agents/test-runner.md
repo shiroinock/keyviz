@@ -67,3 +67,4 @@ $PNPM vitest run src/utils/calculator.test.ts
 ## 注意事項
 - Watch モードは使用しない（一度だけ実行）
 - インポートエラーは Red フェーズでは正常
+- テスト対象ファイルの探索に Bash の `find` / `grep` を使わないこと。ファイルパスは親エージェントから渡される
