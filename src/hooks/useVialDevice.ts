@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { KLEJSON, VIADefinition } from "../types/keyboard";
+import type { VIADefinition } from "../types/keyboard";
 import type { VialDevice } from "../types/vial";
 import {
   connectVialDevice,
@@ -34,17 +34,20 @@ interface UseVialDeviceReturn {
 }
 
 /**
- * VIADefinition かどうかを判定する型ガード
- * getKeyboardDefinition の戻り値が KLEJSON（配列）か VIADefinition（オブジェクト）かを区別する
+ * Vial デバイスから取得した定義が VIADefinition であることを検証する
  */
-function isVIADefinitionResult(
-  value: KLEJSON | VIADefinition,
-): value is VIADefinition {
-  return (
-    !Array.isArray(value) &&
-    "matrix" in value &&
-    typeof value.matrix === "object"
-  );
+function assertVIADefinition(value: unknown): asserts value is VIADefinition {
+  if (
+    Array.isArray(value) ||
+    typeof value !== "object" ||
+    value === null ||
+    !("matrix" in value) ||
+    typeof (value as VIADefinition).matrix !== "object"
+  ) {
+    throw new Error(
+      "Unexpected keyboard definition format: expected VIA definition",
+    );
+  }
 }
 
 export function useVialDevice(
@@ -55,7 +58,7 @@ export function useVialDevice(
   const [status, setStatus] = useState<VialConnectionStatus>("disconnected");
   const [error, setError] = useState<string | null>(null);
   const [deviceName, setDeviceName] = useState<string | null>(null);
-  const [isSupported] = useState(() => isWebHIDSupported());
+  const isSupported = useRef(isWebHIDSupported()).current;
 
   // disconnect 時に参照できるようデバイスを ref で保持
   const deviceRef = useRef<VialDevice | null>(null);
@@ -82,21 +85,11 @@ export function useVialDevice(
       deviceRef.current = device;
 
       const definition = await getKeyboardDefinition(device);
+      assertVIADefinition(definition);
 
-      let layers: number;
-      let matrixSize: number;
-
-      if (isVIADefinitionResult(definition)) {
-        // VIADefinition の場合: matrix からサイズを計算
-        const matrix = definition.matrix ?? DEFAULT_MATRIX;
-        matrixSize = matrix.rows * matrix.cols;
-        layers = DEFAULT_LAYERS;
-      } else {
-        // KLE JSON（配列）の場合: キー数をカウントしてデフォルトレイヤーを使用
-        const flatKeys = definition.flat();
-        matrixSize = flatKeys.filter((item) => typeof item === "string").length;
-        layers = DEFAULT_LAYERS;
-      }
+      const matrix = definition.matrix ?? DEFAULT_MATRIX;
+      const matrixSize = matrix.rows * matrix.cols;
+      const layers = DEFAULT_LAYERS;
 
       const keymapData = await getKeymapData(device, layers, matrixSize);
 
@@ -117,6 +110,14 @@ export function useVialDevice(
       device.hid.addEventListener("disconnect", handleDisconnect);
       disconnectHandlerRef.current = handleDisconnect;
     } catch (e) {
+      if (deviceRef.current !== null) {
+        try {
+          await disconnectVialDevice(deviceRef.current);
+        } catch {
+          // クリーンアップ時のエラーは無視する
+        }
+        deviceRef.current = null;
+      }
       setStatus("error");
       setError(e instanceof Error ? e.message : CONNECT_ERROR_MESSAGE);
     }
