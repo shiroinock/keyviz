@@ -31,9 +31,7 @@ jobs:
               repository(owner: $owner, name: $repo) {
                 issue(number: $number) {
                   parent {
-                    ... on Issue {
-                      number
-                    }
+                    number
                   }
                 }
               }
