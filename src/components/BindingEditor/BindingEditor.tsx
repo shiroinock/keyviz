@@ -6,6 +6,7 @@ import {
   sourceColors,
 } from "../../data/vim-commands";
 import type { KeybindingSource, VimMode } from "../../types/keybinding";
+import { cx } from "../../utils/cx";
 import { KeyCapture } from "../KeyCapture/KeyCapture";
 import { ModeSelector } from "../ModeSelector/ModeSelector";
 import styles from "./BindingEditor.module.css";
@@ -77,7 +78,7 @@ export function BindingEditor() {
               return (
                 <tr
                   key={binding.lhs}
-                  className={`${styles.row} ${isEditing ? styles.rowEditing : ""}`}
+                  className={cx(styles.row, isEditing && styles.rowEditing)}
                   onClick={() => !isEditing && setEditingIndex(index)}
                 >
                   <td className={styles.tdKey}>
@@ -135,7 +136,7 @@ export function BindingEditor() {
                         </button>
                         <button
                           type="button"
-                          className={`${styles.actionButton} ${styles.actionButtonRemove}`}
+                          className={cx(styles.actionButton, styles.actionButtonRemove)}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleRemove(index);

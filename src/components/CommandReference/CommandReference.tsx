@@ -16,6 +16,7 @@ import type {
   VimCommandSource,
 } from "../../types/vim";
 import { matchesVimMode } from "../../types/vim";
+import { cx } from "../../utils/cx";
 import { resolveVimKey } from "../../utils/vim-key-resolver";
 import styles from "./CommandReference.module.css";
 
@@ -226,7 +227,10 @@ export function CommandReference({
             <button
               type="button"
               key={cat}
-              className={`${styles.filterButton} ${selectedCategories.has(cat) ? styles.filterSelected : ""}`}
+              className={cx(
+                styles.filterButton,
+                selectedCategories.has(cat) && styles.filterSelected,
+              )}
               style={
                 selectedCategories.has(cat)
                   ? {
@@ -247,7 +251,10 @@ export function CommandReference({
               <button
                 type="button"
                 key={src}
-                className={`${styles.filterButton} ${selectedSources.has(src) ? styles.filterSelected : ""}`}
+                className={cx(
+                  styles.filterButton,
+                  selectedSources.has(src) && styles.filterSelected,
+                )}
                 style={
                   selectedSources.has(src)
                     ? {
@@ -313,7 +320,10 @@ export function CommandReference({
                           <code>{cmd.key}</code>
                         </td>
                         <td
-                          className={`${styles.cellKey} ${isDifferent ? styles.cellDiff : ""}`}
+                          className={cx(
+                            styles.cellKey,
+                            isDifferent && styles.cellDiff,
+                          )}
                         >
                           <code>{translated}</code>
                         </td>

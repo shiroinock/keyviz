@@ -1,6 +1,7 @@
 import { useId } from "react";
 import type { VimMode } from "../../types/keybinding";
 import { SELECTABLE_VIM_MODES, VIM_MODE_META } from "../../types/keybinding";
+import { cx } from "../../utils/cx";
 import styles from "./ModeSelector.module.css";
 
 interface Props {
@@ -26,7 +27,10 @@ export function ModeSelector({ activeMode, onModeChange }: Props) {
               role="tab"
               id={`tab-vim-${mode}`}
               aria-selected={activeMode === mode}
-              className={`${styles.tab} ${activeMode === mode ? styles.tabActive : ""}`}
+              className={cx(
+                styles.tab,
+                activeMode === mode && styles.tabActive,
+              )}
               onClick={() => onModeChange(mode)}
               title={label}
             >
