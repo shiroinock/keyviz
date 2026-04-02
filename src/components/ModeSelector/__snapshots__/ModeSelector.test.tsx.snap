@@ -37,7 +37,7 @@ exports[`ModeSelector > スナップショット > activeMode='n' のデフォ�
     </button>
     <button
       aria-selected="false"
-      class="_tab_e815f2 "
+      class="_tab_e815f2"
       id="tab-vim-v"
       role="tab"
       title="Visual"
@@ -56,7 +56,7 @@ exports[`ModeSelector > スナップショット > activeMode='n' のデフォ�
     </button>
     <button
       aria-selected="false"
-      class="_tab_e815f2 "
+      class="_tab_e815f2"
       id="tab-vim-o"
       role="tab"
       title="Op-pending"
@@ -75,7 +75,7 @@ exports[`ModeSelector > スナップショット > activeMode='n' のデフォ�
     </button>
     <button
       aria-selected="false"
-      class="_tab_e815f2 "
+      class="_tab_e815f2"
       id="tab-vim-i"
       role="tab"
       title="Insert"
@@ -94,7 +94,7 @@ exports[`ModeSelector > スナップショット > activeMode='n' のデフォ�
     </button>
     <button
       aria-selected="false"
-      class="_tab_e815f2 "
+      class="_tab_e815f2"
       id="tab-vim-s"
       role="tab"
       title="Select"
@@ -113,7 +113,7 @@ exports[`ModeSelector > スナップショット > activeMode='n' のデフォ�
     </button>
     <button
       aria-selected="false"
-      class="_tab_e815f2 "
+      class="_tab_e815f2"
       id="tab-vim-c"
       role="tab"
       title="Command-line"
@@ -132,7 +132,7 @@ exports[`ModeSelector > スナップショット > activeMode='n' のデフォ�
     </button>
     <button
       aria-selected="false"
-      class="_tab_e815f2 "
+      class="_tab_e815f2"
       id="tab-vim-t"
       role="tab"
       title="Terminal"

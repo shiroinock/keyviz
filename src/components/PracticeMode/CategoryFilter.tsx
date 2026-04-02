@@ -1,5 +1,6 @@
 import { categoryColors, categoryLabels } from "../../data/vim-commands";
 import type { VimCommandCategory } from "../../types/vim";
+import { cx } from "../../utils/cx";
 import styles from "./CategoryFilter.module.css";
 
 const allCategories: VimCommandCategory[] = [
@@ -30,7 +31,7 @@ export function CategoryFilter({
           <button
             type="button"
             key={cat}
-            className={`${styles.button} ${isSelected ? styles.selected : ""}`}
+            className={cx(styles.button, isSelected && styles.selected)}
             style={{
               borderColor: color,
               backgroundColor: isSelected ? `${color}33` : "transparent",

@@ -1,6 +1,7 @@
 import { categoryColors } from "../../data/vim-commands";
 import type { KeyData } from "../../types/keyboard";
 import type { HighlightState, VimCommand } from "../../types/vim";
+import { cx } from "../../utils/cx";
 import styles from "./Key.module.css";
 
 const KEY_SIZE = 54; // 1u = 54px
@@ -63,7 +64,7 @@ export function Key({
     <div
       role="button"
       tabIndex={0}
-      className={`${styles.key} ${highlightClass}`}
+      className={cx(styles.key, highlightClass)}
       style={style}
       onMouseEnter={() => onHover(vimCommand, customLabel)}
       onMouseLeave={() => onHover(null, null)}

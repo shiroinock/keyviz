@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useKeybindingContext } from "../../context/KeybindingContext";
+import { cx } from "../../utils/cx";
 import {
   keybindingToJSON,
   keybindingToLangmap,
@@ -119,7 +120,10 @@ export function ExportPanel() {
               id={`tab-${fmt}`}
               aria-controls="tabpanel-export"
               aria-selected={activeFormat === fmt}
-              className={`${styles.tab} ${activeFormat === fmt ? styles.tabActive : ""}`}
+              className={cx(
+                styles.tab,
+                activeFormat === fmt && styles.tabActive,
+              )}
               onClick={() => handleTabChange(fmt)}
             >
               {FORMAT_LABELS[fmt]}
@@ -129,7 +133,7 @@ export function ExportPanel() {
         <div className={styles.actions}>
           <button
             type="button"
-            className={`${styles.actionButton} ${COPY_STATUS_CLASS[copyStatus]}`}
+            className={cx(styles.actionButton, COPY_STATUS_CLASS[copyStatus])}
             data-status={copyStatus}
             onClick={handleCopy}
             disabled={!content}

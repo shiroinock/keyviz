@@ -34,6 +34,7 @@ import {
   MODE_SELECTOR_VISIBLE_MODES,
 } from "./types/keybinding";
 import type { HighlightEntry, VIAKeymapFull, VimCommand } from "./types/vim";
+import { cx } from "./utils/cx";
 import { mergeWithNvimMaps } from "./utils/merge-vim-commands";
 import {
   clearAllStorage,
@@ -215,7 +216,10 @@ function AppContent() {
                 <button
                   key={appMode}
                   type="button"
-                  className={`${styles.modeTab} ${mode === appMode ? styles.modeTabActive : ""}`}
+                  className={cx(
+                    styles.modeTab,
+                    mode === appMode && styles.modeTabActive,
+                  )}
                   onClick={() => setMode(appMode)}
                 >
                   {APP_MODE_LABELS[appMode]}
@@ -264,7 +268,10 @@ function AppContent() {
 
       {!KEYBOARD_HIDDEN_MODES.has(mode) && (
         <div
-          className={`${styles.keyboardWrapper} ${mode === "reference" ? styles.keyboardSticky : ""}`}
+          className={cx(
+            styles.keyboardWrapper,
+            mode === "reference" && styles.keyboardSticky,
+          )}
         >
           <Keyboard
             layout={layout}

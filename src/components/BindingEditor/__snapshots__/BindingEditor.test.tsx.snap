@@ -48,7 +48,7 @@ exports[`BindingEditor > スナップショット > バインディングあり�
         </button>
         <button
           aria-selected="false"
-          class="_tab_e815f2 "
+          class="_tab_e815f2"
           id="tab-vim-v"
           role="tab"
           title="Visual"
@@ -67,7 +67,7 @@ exports[`BindingEditor > スナップショット > バインディングあり�
         </button>
         <button
           aria-selected="false"
-          class="_tab_e815f2 "
+          class="_tab_e815f2"
           id="tab-vim-o"
           role="tab"
           title="Op-pending"
@@ -86,7 +86,7 @@ exports[`BindingEditor > スナップショット > バインディングあり�
         </button>
         <button
           aria-selected="false"
-          class="_tab_e815f2 "
+          class="_tab_e815f2"
           id="tab-vim-i"
           role="tab"
           title="Insert"
@@ -105,7 +105,7 @@ exports[`BindingEditor > スナップショット > バインディングあり�
         </button>
         <button
           aria-selected="false"
-          class="_tab_e815f2 "
+          class="_tab_e815f2"
           id="tab-vim-s"
           role="tab"
           title="Select"
@@ -124,7 +124,7 @@ exports[`BindingEditor > スナップショット > バインディングあり�
         </button>
         <button
           aria-selected="false"
-          class="_tab_e815f2 "
+          class="_tab_e815f2"
           id="tab-vim-c"
           role="tab"
           title="Command-line"
@@ -143,7 +143,7 @@ exports[`BindingEditor > スナップショット > バインディングあり�
         </button>
         <button
           aria-selected="false"
-          class="_tab_e815f2 "
+          class="_tab_e815f2"
           id="tab-vim-t"
           role="tab"
           title="Terminal"
@@ -199,7 +199,7 @@ exports[`BindingEditor > スナップショット > バインディングあり�
     </thead>
     <tbody>
       <tr
-        class="_row_9cd356 "
+        class="_row_9cd356"
       >
         <td
           class="_tdKey_9cd356"
@@ -262,7 +262,7 @@ exports[`BindingEditor > スナップショット > バインディングあり�
         </td>
       </tr>
       <tr
-        class="_row_9cd356 "
+        class="_row_9cd356"
       >
         <td
           class="_tdKey_9cd356"
@@ -377,7 +377,7 @@ exports[`BindingEditor > スナップショット > バインディングなし�
         </button>
         <button
           aria-selected="false"
-          class="_tab_e815f2 "
+          class="_tab_e815f2"
           id="tab-vim-v"
           role="tab"
           title="Visual"
@@ -396,7 +396,7 @@ exports[`BindingEditor > スナップショット > バインディングなし�
         </button>
         <button
           aria-selected="false"
-          class="_tab_e815f2 "
+          class="_tab_e815f2"
           id="tab-vim-o"
           role="tab"
           title="Op-pending"
@@ -415,7 +415,7 @@ exports[`BindingEditor > スナップショット > バインディングなし�
         </button>
         <button
           aria-selected="false"
-          class="_tab_e815f2 "
+          class="_tab_e815f2"
           id="tab-vim-i"
           role="tab"
           title="Insert"
@@ -434,7 +434,7 @@ exports[`BindingEditor > スナップショット > バインディングなし�
         </button>
         <button
           aria-selected="false"
-          class="_tab_e815f2 "
+          class="_tab_e815f2"
           id="tab-vim-s"
           role="tab"
           title="Select"
@@ -453,7 +453,7 @@ exports[`BindingEditor > スナップショット > バインディングなし�
         </button>
         <button
           aria-selected="false"
-          class="_tab_e815f2 "
+          class="_tab_e815f2"
           id="tab-vim-c"
           role="tab"
           title="Command-line"
@@ -472,7 +472,7 @@ exports[`BindingEditor > スナップショット > バインディングなし�
         </button>
         <button
           aria-selected="false"
-          class="_tab_e815f2 "
+          class="_tab_e815f2"
           id="tab-vim-t"
           role="tab"
           title="Terminal"
