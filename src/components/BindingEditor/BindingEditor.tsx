@@ -136,7 +136,10 @@ export function BindingEditor() {
                         </button>
                         <button
                           type="button"
-                          className={cx(styles.actionButton, styles.actionButtonRemove)}
+                          className={cx(
+                            styles.actionButton,
+                            styles.actionButtonRemove,
+                          )}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleRemove(index);
