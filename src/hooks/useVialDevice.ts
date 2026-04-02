@@ -132,7 +132,11 @@ export function useVialDevice(
         );
         disconnectHandlerRef.current = null;
       }
-      await disconnectVialDevice(deviceRef.current);
+      try {
+        await disconnectVialDevice(deviceRef.current);
+      } catch {
+        // 切断時のエラーは無視する
+      }
       deviceRef.current = null;
     }
     setStatus("disconnected");

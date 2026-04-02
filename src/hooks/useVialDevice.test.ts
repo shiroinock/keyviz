@@ -135,6 +135,9 @@ describe("connect()", () => {
       useVialDevice({ onLoadLayout: vi.fn(), onLoadKeymap: vi.fn() }),
     );
 
+    mockGetKeyboardDefinition.mockResolvedValue(VALID_VIA_DEFINITION);
+    mockGetKeymapData.mockResolvedValue(MOCK_KEYMAP_DATA);
+
     act(() => {
       void result.current.connect();
     });
@@ -143,8 +146,6 @@ describe("connect()", () => {
 
     await act(async () => {
       resolveConnect(mockVialDevice);
-      mockGetKeyboardDefinition.mockResolvedValue(VALID_VIA_DEFINITION);
-      mockGetKeymapData.mockResolvedValue(MOCK_KEYMAP_DATA);
     });
   });
 
