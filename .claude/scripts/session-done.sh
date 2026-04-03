@@ -34,7 +34,8 @@ exec 9>"$LOCK_FILE"
 flock -x 9
 
 # バリアチェック: 現在セットの全セッション完了を確認（先頭1件に絞る）
-current_set=$(jq -r '[.sets[] | select(.status == "dispatched")][0].issues | map(tostring) | join(" ")' "$MANIFEST")
+current_set=$(jq -r '([.sets[] | select(.status == "dispatched")][0].issues // []) | map(tostring) | join(" ")' "$MANIFEST")
+[[ -n "$current_set" ]] || { cleanup_worktree "$ISSUE"; exit 0; }
 for num in $current_set; do
   [[ -f "$DONE_DIR/$num" ]] || { cleanup_worktree "$ISSUE"; exit 0; }
 done

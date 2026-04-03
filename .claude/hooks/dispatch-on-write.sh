@@ -13,5 +13,5 @@ WORKDIR=$(jq -r '.workdir // empty' "$FILE_PATH")
 mapfile -t COMMANDS < <(jq -r '.commands[]' "$FILE_PATH")
 [[ ${#COMMANDS[@]} -gt 0 ]] || { echo "dispatch-queue.json に commands がありません" >&2; exit 1; }
 
+trap 'rm -f "$FILE_PATH"' EXIT
 "$PROJECT_DIR/.claude/scripts/ghostty-dispatch.sh" -d "$WORKDIR" "${COMMANDS[@]}"
-rm -f "$FILE_PATH"
