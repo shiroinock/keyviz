@@ -6,6 +6,9 @@ set -euo pipefail
 FILE_PATH=$(cat | jq -r '.tool_input.file_path // empty')
 [[ "$FILE_PATH" == *"dispatch-queue.json" ]] || exit 0
 
+# worktree 内では発火しない（ディスパッチはメインセッションのみ）
+[[ "$(git rev-parse --git-common-dir 2>/dev/null)" == ".git" ]] || exit 0
+
 PROJECT_DIR=$(git -C "$(dirname "$FILE_PATH")" rev-parse --show-toplevel 2>/dev/null || dirname "$(dirname "$FILE_PATH")")
 WORKDIR=$(jq -r '.workdir // empty' "$FILE_PATH")
 [[ -n "$WORKDIR" ]] || { echo "dispatch-queue.json に workdir がありません" >&2; exit 1; }

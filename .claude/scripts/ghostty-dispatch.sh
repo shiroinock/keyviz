@@ -5,6 +5,8 @@
 
 set -euo pipefail
 
+[[ "$(uname)" == "Darwin" ]] || { echo "macOS 専用スクリプトです" >&2; exit 1; }
+
 workdir="$PWD"
 while getopts "d:" opt; do
   case $opt in d) workdir="$OPTARG" ;; esac
@@ -22,6 +24,7 @@ escape_as() {
   local s="${1//\\/\\\\}"
   s="${s//\"/\\\"}"
   s="${s//$'\n'/\\n}"
+  s="${s//$'\t'/\\t}"
   printf '%s' "$s"
 }
 
@@ -33,6 +36,7 @@ as="tell application \"Ghostty\"
   set pane1 to terminal 1 of selected tab of win
 "
 
+# n=1: ペイン分割なし（pane1 のみ使用）
 case $n in
   2) as+='  set pane2 to split pane1 direction right with configuration cfg
 ' ;;

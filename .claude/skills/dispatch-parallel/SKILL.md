@@ -58,13 +58,13 @@ user-invocable: true
 
 最初のセットのコマンドを書き出す。PostToolUse フックが自動検知し、Ghostty にディスパッチする。
 
-**コマンドには `; .claude/scripts/session-done.sh {N} ; exit` を付与する**（ユーザーが `/exit` した後に worktree 削除 + ペイン自動クローズ）:
+**コマンドには `; /absolute/path/to/project/.claude/scripts/session-done.sh {N} ; exit` を付与する**（ユーザーが `/exit` した後に worktree 削除 + ペイン自動クローズ）:
 
 ```json
 {
   "commands": [
-    "claude --worktree issue-172 \"/tdd-next 172\" ; .claude/scripts/session-done.sh 172 ; exit",
-    "claude --worktree issue-182 \"/tdd-next 182\" ; .claude/scripts/session-done.sh 182 ; exit"
+    "claude --worktree issue-172 \"/tdd-next 172\" ; /absolute/path/to/project/.claude/scripts/session-done.sh 172 ; exit",
+    "claude --worktree issue-182 \"/tdd-next 182\" ; /absolute/path/to/project/.claude/scripts/session-done.sh 182 ; exit"
   ],
   "workdir": "/absolute/path/to/project"
 }
