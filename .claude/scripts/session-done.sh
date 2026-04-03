@@ -34,18 +34,18 @@ exec 9>"$LOCK_FILE"
 flock -x 9
 
 # バリアチェック: 現在セットの全セッション完了を確認（先頭1件に絞る）
-current_set=$(jq -r '([.sets[] | select(.status == "dispatched")][0].issues // []) | map(tostring) | join(" ")' "$MANIFEST")
-[[ -n "$current_set" ]] || { cleanup_worktree "$ISSUE"; exit 0; }
-for num in $current_set; do
+mapfile -t current_set < <(jq -r '([.sets[] | select(.status == "dispatched")][0].issues // []) | .[] | tostring' "$MANIFEST")
+[[ ${#current_set[@]} -gt 0 ]] || { cleanup_worktree "$ISSUE"; exit 0; }
+for num in "${current_set[@]}"; do
   [[ -f "$DONE_DIR/$num" ]] || { cleanup_worktree "$ISSUE"; exit 0; }
 done
 
 # 全セッション完了 → worktree 一括削除
-for num in $current_set; do cleanup_worktree "$num"; done
+for num in "${current_set[@]}"; do cleanup_worktree "$num"; done
 
 # manifest 更新、マーカー削除
 jq '(.sets[] | select(.status == "dispatched")).status = "done"' "$MANIFEST" > "$MANIFEST.tmp" && mv "$MANIFEST.tmp" "$MANIFEST"
-for num in $current_set; do rm -f "$DONE_DIR/$num"; done
+for num in "${current_set[@]}"; do rm -f "$DONE_DIR/$num"; done
 
 # 次の pending セットを取得
 next_issues=$(jq -r '[.sets[] | select(.status == "pending")][0].issues // empty' "$MANIFEST")
