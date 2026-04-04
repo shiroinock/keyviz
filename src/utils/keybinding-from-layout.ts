@@ -1,7 +1,10 @@
 import { invertKeymap } from "../data/keymap";
 import { decomposeVimKey, vimCommands } from "../data/vim-commands";
 import type { Keybinding, KeybindingConfig } from "../types/keybinding";
-import { emptyBindings } from "../types/keybinding";
+import {
+  emptyBindings,
+  KEYBINDING_SOURCE_LAYOUT_DERIVED,
+} from "../types/keybinding";
 import type { VimCommand } from "../types/vim";
 import { CURRENT_KEYBINDING_VERSION } from "./storage";
 
@@ -41,7 +44,7 @@ export function deriveFromLayout(
       name: cmd.name,
       description: cmd.description,
       category: cmd.category,
-      source: "layout-derived",
+      source: KEYBINDING_SOURCE_LAYOUT_DERIVED,
       noremap: true,
     };
   });

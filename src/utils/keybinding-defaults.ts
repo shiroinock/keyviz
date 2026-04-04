@@ -4,7 +4,7 @@ import type {
   KeybindingConfig,
   VimMode,
 } from "../types/keybinding";
-import { emptyBindings } from "../types/keybinding";
+import { emptyBindings, KEYBINDING_SOURCE_DEFAULT } from "../types/keybinding";
 import type { VimCommand } from "../types/vim";
 import { CURRENT_KEYBINDING_VERSION } from "./storage";
 
@@ -13,7 +13,7 @@ import { CURRENT_KEYBINDING_VERSION } from "./storage";
  */
 function commandToKeybinding(
   cmd: VimCommand,
-  source: Keybinding["source"] = "default",
+  source: Keybinding["source"] = KEYBINDING_SOURCE_DEFAULT,
 ): Keybinding {
   return {
     lhs: cmd.key,
@@ -57,7 +57,7 @@ export function createDefaultConfig(name = "QWERTY Default"): KeybindingConfig {
 export function commandsToBindings(
   commands: VimCommand[],
   mode: VimMode,
-  source: Keybinding["source"] = "default",
+  source: Keybinding["source"] = KEYBINDING_SOURCE_DEFAULT,
 ): Keybinding[] {
   void mode; // 将来のモード別フィルタリング用
   return commands.map((cmd) => commandToKeybinding(cmd, source));

@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { VimMode } from "../types/keybinding";
+import {
+  KEYBINDING_SOURCE_DEFAULT,
+  KEYBINDING_SOURCE_NVIM_IMPORT,
+} from "../types/keybinding";
 import type { VimCommand } from "../types/vim";
 import { commandsToBindings, createDefaultConfig } from "./keybinding-defaults";
 
@@ -34,7 +38,7 @@ describe("createDefaultConfig", () => {
       expect(kb).toHaveProperty("name");
       expect(kb).toHaveProperty("description");
       expect(kb).toHaveProperty("category");
-      expect(kb.source).toBe("default");
+      expect(kb.source).toBe(KEYBINDING_SOURCE_DEFAULT);
       expect(kb.noremap).toBe(true);
     }
   });
@@ -76,9 +80,13 @@ describe("commandsToBindings", () => {
   });
 
   it("source パラメータが反映される", () => {
-    const result = commandsToBindings(testCommands, "n", "nvim-import");
+    const result = commandsToBindings(
+      testCommands,
+      "n",
+      KEYBINDING_SOURCE_NVIM_IMPORT,
+    );
     for (const kb of result) {
-      expect(kb.source).toBe("nvim-import");
+      expect(kb.source).toBe(KEYBINDING_SOURCE_NVIM_IMPORT);
     }
   });
 });

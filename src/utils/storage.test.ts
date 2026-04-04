@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { KeybindingConfig } from "../types/keybinding";
+import { KEYBINDING_SOURCE_DEFAULT } from "../types/keybinding";
 import {
   CURRENT_KEYBINDING_VERSION,
   clearAllStorage,
@@ -401,7 +402,7 @@ describe("isStoredKeybindingConfig", () => {
       name: "下に移動",
       description: "カーソルを下に移動",
       category: "motion",
-      source: "default",
+      source: KEYBINDING_SOURCE_DEFAULT,
       noremap: true,
     };
 

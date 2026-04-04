@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { defaultCustomKeymap } from "../data/keymap";
 import type { Keybinding, KeybindingConfig } from "../types/keybinding";
-import { emptyBindings } from "../types/keybinding";
+import {
+  emptyBindings,
+  KEYBINDING_SOURCE_DEFAULT,
+  KEYBINDING_SOURCE_USER_EDIT,
+} from "../types/keybinding";
 import {
   keybindingToJSON,
   keybindingToLangmap,
@@ -16,7 +20,7 @@ function makeKeybinding(
     name: "テストコマンド",
     description: "テスト用",
     category: "motion",
-    source: "default",
+    source: KEYBINDING_SOURCE_DEFAULT,
     noremap: true,
     ...overrides,
   };
@@ -474,7 +478,7 @@ describe("keybindingToJSON", () => {
               commandId: "ff",
               rhs: ":Telescope find_files<CR>",
               noremap: true,
-              source: "user-edit",
+              source: KEYBINDING_SOURCE_USER_EDIT,
               name: "ファイル検索",
               description: "Telescope でファイルを検索",
               category: "misc",
@@ -491,7 +495,7 @@ describe("keybindingToJSON", () => {
       expect(binding.commandId).toBe("ff");
       expect(binding.rhs).toBe(":Telescope find_files<CR>");
       expect(binding.noremap).toBe(true);
-      expect(binding.source).toBe("user-edit");
+      expect(binding.source).toBe(KEYBINDING_SOURCE_USER_EDIT);
     });
   });
 

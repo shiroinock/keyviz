@@ -17,6 +17,7 @@ vi.mock("../../utils/keybinding-exporters", () => ({
 
 import { useKeybindingContext } from "../../context/KeybindingContext";
 import type { Keybinding, VimMode } from "../../types/keybinding";
+import { KEYBINDING_SOURCE_DEFAULT } from "../../types/keybinding";
 import {
   keybindingToJSON,
   keybindingToLangmap,
@@ -49,7 +50,7 @@ function buildConfigWithBindings(): KeybindingConfig {
       name: "Move down",
       description: "Move cursor down",
       category: "motion",
-      source: "default",
+      source: KEYBINDING_SOURCE_DEFAULT,
       noremap: true,
     },
   ];

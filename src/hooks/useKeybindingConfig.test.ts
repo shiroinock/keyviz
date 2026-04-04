@@ -6,6 +6,7 @@ vi.mock("../utils/storage", async (importOriginal) => ({
   saveKeybindingConfig: vi.fn(),
 }));
 
+import { KEYBINDING_SOURCE_USER_EDIT } from "../types/keybinding";
 import type { NvimMapping } from "../types/vim";
 import { saveKeybindingConfig } from "../utils/storage";
 import { useKeybindingConfig } from "./useKeybindingConfig";
@@ -38,7 +39,7 @@ describe("useKeybindingConfig — localStorage 永続化", () => {
             name: "テストバインディング",
             description: "テスト用",
             category: "motion",
-            source: "user-edit",
+            source: KEYBINDING_SOURCE_USER_EDIT,
             noremap: true,
           },
         });
@@ -76,7 +77,7 @@ describe("useKeybindingConfig — localStorage 永続化", () => {
             name: "テストバインディング",
             description: "テスト用",
             category: "motion",
-            source: "user-edit",
+            source: KEYBINDING_SOURCE_USER_EDIT,
             noremap: true,
           },
         });
@@ -102,7 +103,7 @@ describe("useKeybindingConfig — localStorage 永続化", () => {
             name: "1回目のバインディング",
             description: "1回目",
             category: "motion",
-            source: "user-edit",
+            source: KEYBINDING_SOURCE_USER_EDIT,
             noremap: true,
           },
         });
@@ -117,7 +118,7 @@ describe("useKeybindingConfig — localStorage 永続化", () => {
             name: "2回目のバインディング",
             description: "2回目",
             category: "motion",
-            source: "user-edit",
+            source: KEYBINDING_SOURCE_USER_EDIT,
             noremap: true,
           },
         });

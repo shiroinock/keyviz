@@ -4,6 +4,10 @@ import {
   APP_MODE_LABELS,
   APP_MODES,
   HIGHLIGHT_MODES,
+  KEYBINDING_SOURCE_DEFAULT,
+  KEYBINDING_SOURCE_LAYOUT_DERIVED,
+  KEYBINDING_SOURCE_NVIM_IMPORT,
+  KEYBINDING_SOURCE_USER_EDIT,
   KEYBINDING_SOURCES,
   KEYBOARD_HIDDEN_MODES,
   KEYBOARD_PLAIN_MODES,
@@ -60,6 +64,31 @@ describe("KEYBINDING_SOURCES", () => {
   test("重複がない", () => {
     const unique = new Set<string>(KEYBINDING_SOURCES);
     expect(unique.size).toBe(KEYBINDING_SOURCES.length);
+  });
+});
+
+describe("KeybindingSource 個別定数", () => {
+  test('KEYBINDING_SOURCE_DEFAULT が "default" と等しい', () => {
+    expect(KEYBINDING_SOURCE_DEFAULT).toBe("default");
+  });
+
+  test('KEYBINDING_SOURCE_LAYOUT_DERIVED が "layout-derived" と等しい', () => {
+    expect(KEYBINDING_SOURCE_LAYOUT_DERIVED).toBe("layout-derived");
+  });
+
+  test('KEYBINDING_SOURCE_NVIM_IMPORT が "nvim-import" と等しい', () => {
+    expect(KEYBINDING_SOURCE_NVIM_IMPORT).toBe("nvim-import");
+  });
+
+  test('KEYBINDING_SOURCE_USER_EDIT が "user-edit" と等しい', () => {
+    expect(KEYBINDING_SOURCE_USER_EDIT).toBe("user-edit");
+  });
+
+  test("全定数が KEYBINDING_SOURCES 配列に含まれる", () => {
+    expect(KEYBINDING_SOURCES).toContain(KEYBINDING_SOURCE_DEFAULT);
+    expect(KEYBINDING_SOURCES).toContain(KEYBINDING_SOURCE_LAYOUT_DERIVED);
+    expect(KEYBINDING_SOURCES).toContain(KEYBINDING_SOURCE_NVIM_IMPORT);
+    expect(KEYBINDING_SOURCES).toContain(KEYBINDING_SOURCE_USER_EDIT);
   });
 });
 

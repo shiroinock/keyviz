@@ -92,6 +92,15 @@ export const KEYBINDING_SOURCES = [
   "user-edit",
 ] as const satisfies KeybindingSource[];
 
+export const KEYBINDING_SOURCE_DEFAULT =
+  "default" as const satisfies KeybindingSource;
+export const KEYBINDING_SOURCE_LAYOUT_DERIVED =
+  "layout-derived" as const satisfies KeybindingSource;
+export const KEYBINDING_SOURCE_NVIM_IMPORT =
+  "nvim-import" as const satisfies KeybindingSource;
+export const KEYBINDING_SOURCE_USER_EDIT =
+  "user-edit" as const satisfies KeybindingSource;
+
 /** 個別のキーバインディング */
 export interface Keybinding {
   /** キーシーケンス ("j", "dd", "<C-f>", "<leader>ff") */

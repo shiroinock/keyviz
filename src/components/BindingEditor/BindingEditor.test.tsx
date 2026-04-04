@@ -2,7 +2,11 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
 import * as KeybindingContextModule from "../../context/KeybindingContext";
 import type { Keybinding, KeybindingConfig } from "../../types/keybinding";
-import { emptyBindings } from "../../types/keybinding";
+import {
+  emptyBindings,
+  KEYBINDING_SOURCE_DEFAULT,
+  KEYBINDING_SOURCE_LAYOUT_DERIVED,
+} from "../../types/keybinding";
 import { BindingEditor } from "./BindingEditor";
 
 const mockDispatch = vi.fn();
@@ -12,7 +16,7 @@ const makeBinding = (overrides: Partial<Keybinding> = {}): Keybinding => ({
   name: "↓",
   description: "下に移動",
   category: "motion",
-  source: "default",
+  source: KEYBINDING_SOURCE_DEFAULT,
   noremap: false,
   ...overrides,
 });
@@ -43,7 +47,7 @@ describe("BindingEditor", () => {
             lhs: "j",
             name: "↓",
             category: "motion",
-            source: "default",
+            source: KEYBINDING_SOURCE_DEFAULT,
           }),
         ]),
       );
@@ -243,14 +247,14 @@ describe("BindingEditor", () => {
             name: "↓",
             description: "下に移動",
             category: "motion",
-            source: "default",
+            source: KEYBINDING_SOURCE_DEFAULT,
           }),
           makeBinding({
             lhs: "k",
             name: "↑",
             description: "上に移動",
             category: "motion",
-            source: "layout-derived",
+            source: KEYBINDING_SOURCE_LAYOUT_DERIVED,
           }),
         ]),
       );
