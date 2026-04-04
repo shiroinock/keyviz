@@ -9,6 +9,10 @@ vi.mock("../utils/storage", async (importOriginal) => ({
 }));
 
 import type { KeybindingConfig } from "../types/keybinding";
+import {
+  KEYBINDING_SOURCE_DEFAULT,
+  KEYBINDING_SOURCE_USER_EDIT,
+} from "../types/keybinding";
 import { loadKeybindingConfig } from "../utils/storage";
 import { KeybindingProvider, useKeybindingContext } from "./KeybindingContext";
 
@@ -24,7 +28,7 @@ const savedConfig: KeybindingConfig = {
         name: "下に移動",
         description: "カーソルを下に移動",
         category: "motion",
-        source: "user-edit",
+        source: KEYBINDING_SOURCE_USER_EDIT,
         noremap: true,
       },
     ],
@@ -50,7 +54,7 @@ const initialConfig: KeybindingConfig = {
         name: "上に移動",
         description: "カーソルを上に移動",
         category: "motion",
-        source: "default",
+        source: KEYBINDING_SOURCE_DEFAULT,
         noremap: true,
       },
     ],

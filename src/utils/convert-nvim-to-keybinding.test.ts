@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { VimMode } from "../types/keybinding";
+import { KEYBINDING_SOURCE_NVIM_IMPORT } from "../types/keybinding";
 import type { NvimMapping, VimCommand } from "../types/vim";
 import { convertNvimMapsToKeybindings } from "./convert-nvim-to-keybinding";
 
@@ -119,14 +120,14 @@ describe("convertNvimMapsToKeybindings", () => {
       const maps = [makeNvimMap({ lhs: "j", mode: "n" })];
       const result = convertNvimMapsToKeybindings(maps, baseVimCommands);
 
-      expect(result.n[0].source).toBe("nvim-import");
+      expect(result.n[0].source).toBe(KEYBINDING_SOURCE_NVIM_IMPORT);
     });
 
     it("VimCommand にマッチしないマップの source が 'nvim-import' になる", () => {
       const maps = [makeNvimMap({ lhs: "gd", mode: "n" })];
       const result = convertNvimMapsToKeybindings(maps, baseVimCommands);
 
-      expect(result.n[0].source).toBe("nvim-import");
+      expect(result.n[0].source).toBe(KEYBINDING_SOURCE_NVIM_IMPORT);
     });
 
     it("複数マップの全バインディングの source が 'nvim-import' になる", () => {
@@ -137,7 +138,9 @@ describe("convertNvimMapsToKeybindings", () => {
       ];
       const result = convertNvimMapsToKeybindings(maps, baseVimCommands);
 
-      expect(result.n.every((b) => b.source === "nvim-import")).toBe(true);
+      expect(
+        result.n.every((b) => b.source === KEYBINDING_SOURCE_NVIM_IMPORT),
+      ).toBe(true);
     });
   });
 

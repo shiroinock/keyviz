@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { VimMode } from "../types/keybinding";
+import { KEYBINDING_SOURCE_LAYOUT_DERIVED } from "../types/keybinding";
 import { deriveFromLayout } from "./keybinding-from-layout";
 
 describe("deriveFromLayout", () => {
@@ -28,7 +29,7 @@ describe("deriveFromLayout", () => {
 
   it("source が 'layout-derived' である", () => {
     for (const kb of config.bindings.n) {
-      expect(kb.source).toBe("layout-derived");
+      expect(kb.source).toBe(KEYBINDING_SOURCE_LAYOUT_DERIVED);
     }
   });
 

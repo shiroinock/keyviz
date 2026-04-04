@@ -6,24 +6,30 @@ import {
   sourceColors,
 } from "../../data/vim-commands";
 import type { KeybindingSource, VimMode } from "../../types/keybinding";
+import {
+  KEYBINDING_SOURCE_DEFAULT,
+  KEYBINDING_SOURCE_LAYOUT_DERIVED,
+  KEYBINDING_SOURCE_NVIM_IMPORT,
+  KEYBINDING_SOURCE_USER_EDIT,
+} from "../../types/keybinding";
 import { cx } from "../../utils/cx";
 import { KeyCapture } from "../KeyCapture/KeyCapture";
 import { ModeSelector } from "../ModeSelector/ModeSelector";
 import styles from "./BindingEditor.module.css";
 
-const SOURCE_DISPLAY_KEYS: Record<KeybindingSource, string> = {
-  default: "hardcoded",
-  "layout-derived": "nvim-default",
-  "nvim-import": "plugin",
-  "user-edit": "user",
-};
+const SOURCE_DISPLAY_KEYS = {
+  [KEYBINDING_SOURCE_DEFAULT]: "hardcoded",
+  [KEYBINDING_SOURCE_LAYOUT_DERIVED]: "nvim-default",
+  [KEYBINDING_SOURCE_NVIM_IMPORT]: "plugin",
+  [KEYBINDING_SOURCE_USER_EDIT]: "user",
+} satisfies Record<KeybindingSource, string>;
 
-const SOURCE_LABELS: Record<KeybindingSource, string> = {
-  default: "デフォルト",
-  "layout-derived": "レイアウト",
-  "nvim-import": "nvim",
-  "user-edit": "ユーザー",
-};
+const SOURCE_LABELS = {
+  [KEYBINDING_SOURCE_DEFAULT]: "デフォルト",
+  [KEYBINDING_SOURCE_LAYOUT_DERIVED]: "レイアウト",
+  [KEYBINDING_SOURCE_NVIM_IMPORT]: "nvim",
+  [KEYBINDING_SOURCE_USER_EDIT]: "ユーザー",
+} satisfies Record<KeybindingSource, string>;
 
 export function BindingEditor() {
   const { config, dispatch } = useKeybindingContext();

@@ -6,6 +6,7 @@ import type {
   KeybindingConfig,
   VimMode,
 } from "../types/keybinding";
+import { KEYBINDING_SOURCE_USER_EDIT } from "../types/keybinding";
 import type { NvimMapping } from "../types/vim";
 import { convertNvimMapsToKeybindings } from "../utils/convert-nvim-to-keybinding";
 import { createDefaultConfig } from "../utils/keybinding-defaults";
@@ -46,7 +47,7 @@ function keybindingReducer(
       modeBindings[action.index] = {
         ...modeBindings[action.index],
         ...action.binding,
-        source: "user-edit",
+        source: KEYBINDING_SOURCE_USER_EDIT,
       };
       return {
         ...state,

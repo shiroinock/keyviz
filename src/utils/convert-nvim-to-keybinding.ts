@@ -1,5 +1,8 @@
 import type { Keybinding, VimMode } from "../types/keybinding";
-import { emptyBindings } from "../types/keybinding";
+import {
+  emptyBindings,
+  KEYBINDING_SOURCE_NVIM_IMPORT,
+} from "../types/keybinding";
 import type { NvimMapping, VimCommand } from "../types/vim";
 import { expandNvimMapMode } from "../types/vim";
 
@@ -22,7 +25,7 @@ export function convertNvimMapsToKeybindings(
           name: matched.name,
           description: matched.description,
           category: matched.category,
-          source: "nvim-import",
+          source: KEYBINDING_SOURCE_NVIM_IMPORT,
           noremap: map.noremap,
         }
       : {
@@ -31,7 +34,7 @@ export function convertNvimMapsToKeybindings(
           name: map.lhs,
           description: map.description,
           category: "misc",
-          source: "nvim-import",
+          source: KEYBINDING_SOURCE_NVIM_IMPORT,
           noremap: map.noremap,
         };
 
