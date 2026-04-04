@@ -123,7 +123,7 @@ describe("keybindingToLua", () => {
   });
 
   describe("noremap オプション", () => {
-    it("noremap: true の場合は { noremap = true } オプションを付与する", () => {
+    it('noremap: true の場合は { noremap = true, desc = "..." } オプションを付与する', () => {
       const config = makeConfig({
         bindings: {
           ...emptyBindings(),
@@ -133,10 +133,10 @@ describe("keybindingToLua", () => {
 
       const result = keybindingToLua(config);
 
-      expect(result).toContain("{ noremap = true }");
+      expect(result).toContain('{ noremap = true, desc = "テストコマンド" }');
     });
 
-    it("noremap: false の場合は { noremap = false } オプションを付与する", () => {
+    it('noremap: false の場合は noremap を省略し { desc = "..." } のみ出力する', () => {
       const config = makeConfig({
         bindings: {
           ...emptyBindings(),
@@ -146,7 +146,82 @@ describe("keybindingToLua", () => {
 
       const result = keybindingToLua(config);
 
-      expect(result).toContain("{ noremap = false }");
+      expect(result).toContain('{ desc = "テストコマンド" }');
+      expect(result).not.toContain("noremap");
+    });
+  });
+
+  describe("desc オプション", () => {
+    it("binding.name が desc オプションとして出力される", () => {
+      const config = makeConfig({
+        bindings: {
+          ...emptyBindings(),
+          n: [makeKeybinding({ lhs: "j", commandId: "j", name: "下に移動" })],
+        },
+      });
+
+      const result = keybindingToLua(config);
+
+      expect(result).toContain('desc = "下に移動"');
+    });
+
+    it("noremap: false の場合は noremap を省略し desc のみ出力される", () => {
+      const config = makeConfig({
+        bindings: {
+          ...emptyBindings(),
+          n: [
+            makeKeybinding({
+              lhs: "j",
+              commandId: "j",
+              noremap: false,
+              name: "下に移動",
+            }),
+          ],
+        },
+      });
+
+      const result = keybindingToLua(config);
+
+      expect(result).toContain('{ desc = "下に移動" }');
+      expect(result).not.toContain("noremap");
+    });
+
+    it('binding.name に " が含まれる場合はエスケープされる', () => {
+      const config = makeConfig({
+        bindings: {
+          ...emptyBindings(),
+          n: [
+            makeKeybinding({
+              lhs: "j",
+              commandId: "j",
+              name: '言う "hello"',
+            }),
+          ],
+        },
+      });
+
+      const result = keybindingToLua(config);
+
+      expect(result).toContain('desc = "言う \\"hello\\""');
+    });
+
+    it("binding.name に \\ が含まれる場合はエスケープされる", () => {
+      const config = makeConfig({
+        bindings: {
+          ...emptyBindings(),
+          n: [
+            makeKeybinding({
+              lhs: "j",
+              commandId: "j",
+              name: "パス\\区切り",
+            }),
+          ],
+        },
+      });
+
+      const result = keybindingToLua(config);
+
+      expect(result).toContain('desc = "パス\\\\区切り"');
     });
   });
 
