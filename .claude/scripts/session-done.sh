@@ -10,7 +10,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 MANIFEST="$PROJECT_DIR/.claude/dispatch-manifest.json"
 DONE_DIR="$PROJECT_DIR/.claude/dispatch-done"
-LOCK_FILE="$PROJECT_DIR/.claude/dispatch.lock"
+LOCK_DIR="$PROJECT_DIR/.claude/dispatch.lock"
+LOCK_STALE_MINUTES=10
 
 # Worktree 削除ヘルパー
 cleanup_worktree() {
@@ -29,9 +30,16 @@ touch "$DONE_DIR/$ISSUE"
 
 [[ -f "$MANIFEST" ]] || { cleanup_worktree "$ISSUE"; exit 0; }
 
-# flock で排他制御（TOCTOU 防止）
-exec 9>"$LOCK_FILE"
-flock -x 9
+if [[ -d "$LOCK_DIR" ]] && find "$LOCK_DIR" -maxdepth 0 -mmin +"$LOCK_STALE_MINUTES" -print | grep -q .; then
+  rmdir "$LOCK_DIR" 2>/dev/null || true
+fi
+
+# mkdir による排他ロック（POSIX atomic）
+if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+  cleanup_worktree "$ISSUE"
+  exit 0
+fi
+trap 'rmdir "$LOCK_DIR" 2>/dev/null || true' EXIT
 
 # バリアチェック: 現在セットの全セッション完了を確認（先頭1件に絞る）
 mapfile -t current_set < <(jq -r '([.sets[] | select(.status == "dispatched")][0].issues // []) | .[] | tostring' "$MANIFEST")
@@ -50,7 +58,9 @@ for num in "${current_set[@]}"; do rm -f "$DONE_DIR/$num"; done
 # 次の pending セットを取得
 next_issues=$(jq -r '[.sets[] | select(.status == "pending")][0].issues // empty' "$MANIFEST")
 if [[ -z "$next_issues" || "$next_issues" == "null" ]]; then
-  rm -f "$MANIFEST" "$LOCK_FILE"
+  rm -f "$MANIFEST"
+  rmdir "$LOCK_DIR" 2>/dev/null || true
+  trap - EXIT
   rmdir "$DONE_DIR" 2>/dev/null || true
   exit 0
 fi
