@@ -176,8 +176,10 @@ describe("VIM_COMMAND_CATEGORIES", () => {
 });
 
 describe("VIM_PRACTICE_CATEGORIES", () => {
-  test("7つの要素を持つ", () => {
-    expect(VIM_PRACTICE_CATEGORIES).toHaveLength(7);
+  test("textobj を除いた全カテゴリを持つ", () => {
+    expect(VIM_PRACTICE_CATEGORIES).toHaveLength(
+      VIM_COMMAND_CATEGORIES.length - 1,
+    );
   });
 
   test("textobj を含まない", () => {
