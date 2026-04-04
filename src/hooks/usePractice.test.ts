@@ -33,7 +33,7 @@ describe("usePractice — toggleCategory で DEFAULT_NVIM_MAP_CATEGORY を操作
       ).toBe(false);
     });
 
-    it("最後の1カテゴリは削除できない（size が 1 以上を維持する）", () => {
+    it("最後の1カテゴリは削除できない（size が 1 を維持する）", () => {
       const { result } = renderHook(() => usePractice({}));
 
       const allCategories = [...result.current.selectedCategories];
