@@ -24,6 +24,9 @@ export const VIM_COMMAND_CATEGORIES = [
   "misc",
 ] as const satisfies VimCommandCategory[];
 
+/** nvim マッピング新規エントリのデフォルトカテゴリ */
+export const DEFAULT_NVIM_MAP_CATEGORY: VimCommandCategory = "misc";
+
 // ── Neovim map 連携 ──
 
 export type NvimMapMode = "n" | "x" | "o" | "v" | "s" | "!" | "";

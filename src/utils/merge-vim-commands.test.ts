@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { VimMode } from "../types/keybinding";
 import type { NvimMapping, VimCommand } from "../types/vim";
+import { DEFAULT_NVIM_MAP_CATEGORY } from "../types/vim";
 import { mergeWithNvimMaps } from "./merge-vim-commands";
 
 const baseCommands: VimCommand[] = [
@@ -49,7 +50,7 @@ describe("mergeWithNvimMaps", () => {
     const gd = result.find((c) => c.key === "gd");
     expect(gd).toBeDefined();
     expect(gd?.description).toBe("Go to definition");
-    expect(gd?.category).toBe("misc");
+    expect(gd?.category).toBe(DEFAULT_NVIM_MAP_CATEGORY);
   });
 
   it("description が空の nvim マップはスキップされる", () => {
