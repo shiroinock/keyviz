@@ -23,9 +23,13 @@ export function keybindingToLua(config: KeybindingConfig): string {
       if (!rhs) continue;
       const lhsEscaped = escapeLua(binding.lhs);
       const rhsEscaped = escapeLua(rhs);
-      const noremapVal = binding.noremap ? "true" : "false";
+      const opts: string[] = [];
+      if (!binding.noremap) {
+        opts.push("noremap = false");
+      }
+      opts.push(`desc = "${escapeLua(binding.name)}"`);
       lines.push(
-        `vim.keymap.set("${mode}", "${lhsEscaped}", "${rhsEscaped}", { noremap = ${noremapVal} })`,
+        `vim.keymap.set("${mode}", "${lhsEscaped}", "${rhsEscaped}", { ${opts.join(", ")} })`,
       );
     }
     lines.push("");
