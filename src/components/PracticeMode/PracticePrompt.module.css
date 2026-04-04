@@ -7,11 +7,11 @@
   transition: border-color 0.3s;
 }
 
-.panel.correct {
+.panel[data-result="correct"] {
   border-color: var(--ctp-green);
 }
 
-.panel.incorrect {
+.panel[data-result="incorrect"] {
   border-color: var(--ctp-red);
 }
 

@@ -1,6 +1,5 @@
 import { categoryColors, categoryLabels } from "../../data/vim-commands";
 import type { KeyInputSpec, PracticeScore, VimCommand } from "../../types/vim";
-import { cx } from "../../utils/cx";
 import styles from "./PracticePrompt.module.css";
 
 interface PracticePromptProps {
@@ -47,11 +46,7 @@ export function PracticePrompt({
 
   return (
     <div
-      className={cx(
-        styles.panel,
-        lastResult === "correct" && styles.correct,
-        lastResult === "incorrect" && styles.incorrect,
-      )}
+      className={styles.panel}
       data-testid="practice-prompt"
       data-result={lastResult}
     >
