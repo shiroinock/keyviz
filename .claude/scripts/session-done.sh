@@ -65,8 +65,12 @@ if [[ -z "$next_issues" || "$next_issues" == "null" ]]; then
   exit 0
 fi
 
-# main を最新化（HEAD を変更しないよう fetch のみ）
-git -C "$PROJECT_DIR" fetch origin main 2>&1 || echo "fetch origin main failed, continuing with local state" >&2
+# main を最新化（fetch + merge --ff-only でワーキングツリーも更新）
+if git -C "$PROJECT_DIR" fetch origin main 2>&1; then
+  git -C "$PROJECT_DIR" merge --ff-only origin/main 2>&1 || echo "merge --ff-only origin/main failed, continuing with local state" >&2
+else
+  echo "fetch origin main failed, continuing with local state" >&2
+fi
 
 # 次セットを dispatched に更新
 jq '
