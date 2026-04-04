@@ -1,6 +1,6 @@
 import type { VimMode } from "../types/keybinding";
 import type { MergedVimCommand, NvimMapping, VimCommand } from "../types/vim";
-import { expandNvimMapMode } from "../types/vim";
+import { DEFAULT_NVIM_MAP_CATEGORY, expandNvimMapMode } from "../types/vim";
 
 /**
  * ハードコードの Vim コマンドと nvim の実マッピングをマージする
@@ -49,7 +49,7 @@ export function mergeWithNvimMaps(
         key,
         name: key,
         description,
-        category: "misc",
+        category: DEFAULT_NVIM_MAP_CATEGORY,
         source: nvMap.source,
         modes: expandedModes,
       });
