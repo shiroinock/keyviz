@@ -24,6 +24,11 @@ export const VIM_COMMAND_CATEGORIES = [
   "misc",
 ] as const satisfies VimCommandCategory[];
 
+/** 練習モード用カテゴリ（textobj を除く） */
+export const VIM_PRACTICE_CATEGORIES = VIM_COMMAND_CATEGORIES.filter(
+  (c) => c !== "textobj",
+);
+
 /** nvim マッピング新規エントリのデフォルトカテゴリ */
 export const DEFAULT_NVIM_MAP_CATEGORY: VimCommandCategory = "misc";
 
