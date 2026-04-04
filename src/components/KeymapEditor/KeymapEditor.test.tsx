@@ -75,16 +75,16 @@ describe("KeymapEditor", () => {
 
   describe("customKeymap の値表示", () => {
     test("customKeymap の出力文字が正しく表示される", () => {
-      renderWithContext(defaultCustomKeymap);
+      renderWithContext(IDENTITY_KEYMAP);
 
       const cellQ = screen.getByTestId("output-cell-q");
       expect(cellQ).toHaveTextContent("q");
 
       const cellW = screen.getByTestId("output-cell-w");
-      expect(cellW).toHaveTextContent("l");
+      expect(cellW).toHaveTextContent("w");
 
       const cellJ = screen.getByTestId("output-cell-j");
-      expect(cellJ).toHaveTextContent("t");
+      expect(cellJ).toHaveTextContent("j");
     });
 
     test("customKeymap 未設定時は defaultCustomKeymap の値が表示される", () => {
