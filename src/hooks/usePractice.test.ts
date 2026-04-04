@@ -44,6 +44,9 @@ describe("usePractice — toggleCategory で DEFAULT_NVIM_MAP_CATEGORY を操作
       });
 
       expect(result.current.selectedCategories.size).toBe(1);
+      expect(
+        result.current.selectedCategories.has(DEFAULT_NVIM_MAP_CATEGORY),
+      ).toBe(true);
     });
   });
 
